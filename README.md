@@ -14,28 +14,48 @@
 ### 本地开发
 
 ```bash
-# 1. 安装依赖
+# 1. 克隆项目
+git clone <repository-url>
+cd wotagei_basic_workshop
+
+# 2. 安装依赖
 cd server
 npm install
 
-# 2. 配置环境变量
+# 3. 配置环境变量
 cp .env.example .env
-# 编辑 .env，修改 ADMIN_TOKEN 为安全的随机字符串
+# 编辑 .env 文件，修改 ADMIN_TOKEN 为安全的随机字符串（至少 32 字符）
 
-# 3. 启动开发服务器
+# 4. 启动开发服务器
 npm run dev
-
-# 4. 访问
-# 演示端: http://localhost:3000/presentation/index.html
-# 移动端: http://localhost:3000/mobile/
 ```
 
-### 生产环境
+### 访问
 
-```bash
-cd server
-npm start
-```
+- 演示端: http://localhost:3000/presentation/index.html
+- 移动端: http://localhost:3000/mobile/
+
+### 生产环境注意事项
+
+1. **修改 ADMIN_TOKEN**：在 `.env` 中设置强密码
+2. **修改域名配置**：编辑 `public/presentation/js/config.js`
+   ```javascript
+   const API_BASE_URL = 'https://your-domain.com/api';
+   const QR_BASE_URL = 'https://your-domain.com/mobile';
+   ```
+3. **启用 HTTPS**：使用 Nginx + Let's Encrypt
+
+## 功能特性
+
+- ✅ Reveal.js 演示幻灯片（12 页）
+- ✅ 实时投票系统（斗舞 BATTLE）
+- ✅ 自动负载均衡分组（分配到人数最少的组）
+- ✅ 公平随机抽奖（Fisher-Yates 算法）
+- ✅ 二维码扫码参与
+- ✅ 移动端友好设计（支持 320px 宽度）
+- ✅ 防重复机制（基于 deviceId）
+- ✅ 数据重置功能
+- ✅ XSS 防护（escapeHtml）
 
 ## 部署到云服务器
 
@@ -43,7 +63,7 @@ npm start
 
 - Node.js 16.x 或更高
 - PM2（进程管理）
-- Nginx（可选，用于反向代理和 HTTPS）
+- Nginx（可选，用于反向代理）
 
 ### 部署步骤
 
@@ -60,7 +80,7 @@ sudo npm install -g pm2
 
 # 4. 克隆项目
 cd /var/www
-git clone <your-repo-url> wotagei-workshop
+git clone <repository-url> wotagei-workshop
 cd wotagei-workshop
 
 # 5. 安装依赖
@@ -71,7 +91,9 @@ npm install
 cp .env.example .env
 nano .env
 # 修改：
-# ADMIN_TOKEN=your-very-secure-random-token-here
+# PORT=3000
+# NODE_ENV=production
+# ADMIN_TOKEN=<强密码，至少32字符>
 # BASE_URL=https://your-domain.com
 
 # 7. 启动应用
@@ -82,7 +104,50 @@ pm2 startup
 pm2 save
 ```
 
-### PM2 常用命令
+### Nginx 反向代理（可选）
+
+创建 `/etc/nginx/sites-available/wotagei-workshop`：
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+启用配置：
+
+```bash
+sudo ln -s /etc/nginx/sites-available/wotagei-workshop /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### SSL 证书（Let's Encrypt）
+
+```bash
+# 安装 Certbot
+sudo apt install certbot python3-certbot-nginx
+
+# 获取证书
+sudo certbot --nginx -d your-domain.com
+
+# 测试自动续期
+sudo certbot renew --dry-run
+```
+
+### PM2 管理
 
 ```bash
 pm2 list                    # 查看所有进程
@@ -92,96 +157,37 @@ pm2 stop wotagei-workshop    # 停止应用
 pm2 delete wotagei-workshop  # 删除进程
 ```
 
-### Nginx 配置（可选）
-
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-    return 301 https://$server_name$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name your-domain.com;
-
-    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-### SSL 证书（Let's Encrypt）
+### 更新部署
 
 ```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d your-domain.com
-sudo certbot renew --dry-run  # 测试自动续期
+cd /var/www/wotagei-workshop
+git pull
+cd server
+npm install
+pm2 restart wotagei-workshop
 ```
 
-### 生产环境配置
+## 音视频文件
 
-修改 `public/presentation/js/config.js`：
+将音乐和视频文件放到对应目录：
 
-```javascript
-const API_BASE_URL = 'https://your-domain.com/api';
-const QR_BASE_URL = 'https://your-domain.com/mobile';
-```
+- **音乐文件**: `public/presentation/assets/music/`
+  - `battle1.mp3` - BATTLE 1 背景音乐
+  - `battle2.mp3` - BATTLE 2 背景音乐
+  - 支持格式：MP3, AAC
 
-## 功能特性
+- **视频文件**: `public/presentation/assets/videos/`
+  - `demo.mp4` - Wota 艺演示视频
+  - 支持格式：MP4, WebM
 
-- ✅ Reveal.js 演示幻灯片，类似 PowerPoint 操作
-- ✅ 实时投票系统（斗舞 BATTLE）
-- ✅ 自动负载均衡分组（分配到人数最少的组）
-- ✅ 公平随机抽奖（Fisher-Yates 算法）
-- ✅ 二维码扫码参与
-- ✅ 移动端友好设计（320px-768px）
-- ✅ 防重复机制（基于 deviceId）
-- ✅ 数据重置功能
-- ✅ API 限流保护
+- **舞者头像**: `public/presentation/assets/images/`
+  - `dancer-a.jpg`, `dancer-b.jpg`, `dancer-c.jpg`, `dancer-d.jpg`
+  - 建议尺寸：200x200px
 
-## 使用说明
-
-### 演示端快捷键
-
-- `←/→` 或 点击背景 - 切换幻灯片
-- `F` - 全屏/退出全屏
-- `Esc` - 显示幻灯片缩略图
-- `G` - 打开分组配置面板（输入组数）
-- `L` - 打开抽奖配置面板（输入抽取人数）
-- `R` - 重置当前环节数据（需确认）
-- `Space` - 在抽奖页面开始/停止抽奖
-
-### 添加音乐和视频
-
-将资源文件放到对应目录：
-
-- 音乐：`public/presentation/assets/music/`
-  - `battle1.mp3` - BATTLE 1 音乐
-  - `battle2.mp3` - BATTLE 2 音乐
-- 视频：`public/presentation/assets/videos/`
-  - `demo.mp4` - 演示视频
-- 支持格式：MP3/AAC（音频），MP4/WebM（视频）
-
-### 修改舞者信息
-
-编辑 `server/state.js`，修改 `battles` 对象中的舞者信息：
-
-```javascript
-dancer1: { 
-  name: '舞者名称', 
-  avatar: '/presentation/assets/images/舞者头像.jpg', 
-  votes: 0 
-}
-```
+- **流派 Logo**: `public/presentation/assets/images/`
+  - `kansai-logo.png` - 关西流派
+  - `torch-logo.png` - 火把流派
+  - 建议尺寸：400x300px
 
 ## 项目结构
 
@@ -203,7 +209,11 @@ wotagei-basic-workshop/
 │   │   ├── js/
 │   │   └── assets/
 │   └── mobile/           # 移动端
-│       ├── *.html
+│       ├── index.html
+│       ├── nickname.html
+│       ├── vote.html
+│       ├── group.html
+│       ├── lottery.html
 │       ├── css/
 │       └── js/
 ├── docs/
@@ -214,30 +224,55 @@ wotagei-basic-workshop/
 
 ## 常见问题
 
-**Q: 如何修改管理员密码？**  
-A: 修改服务器端的 `.env` 文件中的 `ADMIN_TOKEN`，然后重启服务。
+### 如何修改舞者信息？
 
-**Q: 忘记 ADMIN_TOKEN 怎么办？**  
-A: 在服务器上查看 `.env` 文件或 `server/state.js` 中的默认值。
+编辑 `server/state.js` 中的初始化数据：
 
-**Q: 如何添加更多 BATTLE？**  
-A: 1) 在 `state.js` 中添加新的 battle 对象，2) 在 `index.html` 中复制幻灯片，3) 在 `main.js` 中添加对应的轮询逻辑。
+```javascript
+battles: {
+  battle1: {
+    dancer1: { 
+      name: '你的舞者名称', 
+      avatar: '/presentation/assets/images/your-image.jpg', 
+      votes: 0 
+    },
+    // ...
+  }
+}
+```
 
-**Q: 移动端扫码后显示 404？**  
-A: 检查 `config.js` 中的 `QR_BASE_URL` 是否配置正确，确保指向移动端页面的实际 URL。
+### 如何添加更多 BATTLE？
 
-**Q: API 返回 403 Forbidden？**  
-A: 检查请求中的 `adminToken` 是否与服务器端配置的 `ADMIN_TOKEN` 一致。
+1. 在 `state.js` 中添加新的 battle 数据
+2. 在 `presentation/index.html` 中复制一组 BATTLE 幻灯片（准备/音乐/投票）
+3. 修改对应的 id（如 `battle3-intro`, `vote-battle3`）
+4. 在 `main.js` 的 slidechanged 事件中添加对应的轮询逻辑
+
+### 忘记 ADMIN_TOKEN 怎么办？
+
+在服务器上查看 `.env` 文件：
+
+```bash
+cat /var/www/wotagei-workshop/server/.env
+```
+
+### 如何重置所有数据？
+
+1. 演示端按 `R` 键
+2. 或重启服务器（数据存储在内存中）
+
+### 移动端扫码后显示 404
+
+检查：
+1. `config.js` 中的 `QR_BASE_URL` 是否正确
+2. 服务器是否正常运行
+3. 移动端文件是否正确部署到 `public/mobile/`
 
 ## 文档
 
 - 设计规格: `docs/superpowers/specs/2026-10-16-wotagei-workshop-interactive-presentation-design.md`
 - 实施计划: `docs/superpowers/plans/2026-10-16-wotagei-workshop-implementation.md`
 - 协作约定: `AGENTS.md`
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！
 
 ## 许可证
 
