@@ -50,21 +50,19 @@
         <h2>BATTLE 1 投票</h2>
         <div class="vote-container">
           <div class="dancer-info">
-            <img src="assets/images/dancer-a.jpg" alt="舞者 A">
             <h3>舞者 A</h3>
-            <p id="votes-dancer1-battle1">票数: 0</p>
+            <div id="votes-dancer1-battle1">0 票</div>
           </div>
-          <div class="qrcode">
-            <div id="qr-vote-battle1"></div>
+          <div>
+            <div id="qr-vote-battle1" class="qrcode"></div>
             <p>扫码投票</p>
           </div>
           <div class="dancer-info">
-            <img src="assets/images/dancer-b.jpg" alt="舞者 B">
             <h3>舞者 B</h3>
-            <p id="votes-dancer2-battle1">票数: 0</p>
+            <div id="votes-dancer2-battle1">0 票</div>
           </div>
         </div>
-        <canvas id="vote-chart-battle1" style="max-width: 600px; margin: 30px auto;"></canvas>
+        <canvas id="vote-chart-battle1"></canvas>
       </section>
 
       <!-- 5. 视频播放 -->
@@ -81,12 +79,12 @@
         <h2>Wota 艺两大流派</h2>
         <div class="styles-comparison">
           <div class="style-column">
+            <img src="assets/images/kansai-logo.png" alt="关西">
             <h3>关西</h3>
-            <img src="assets/images/kansai-logo.png" alt="关西流派">
           </div>
           <div class="style-column">
+            <img src="assets/images/torch-logo.png" alt="火把">
             <h3>火把</h3>
-            <img src="assets/images/torch-logo.png" alt="火把流派">
           </div>
         </div>
       </section>
@@ -120,50 +118,48 @@
         <h2>BATTLE 2 投票</h2>
         <div class="vote-container">
           <div class="dancer-info">
-            <img src="assets/images/dancer-c.jpg" alt="舞者 C">
             <h3>舞者 C</h3>
-            <p id="votes-dancer1-battle2">票数: 0</p>
+            <div id="votes-dancer1-battle2">0 票</div>
           </div>
-          <div class="qrcode">
-            <div id="qr-vote-battle2"></div>
+          <div>
+            <div id="qr-vote-battle2" class="qrcode"></div>
             <p>扫码投票</p>
           </div>
           <div class="dancer-info">
-            <img src="assets/images/dancer-d.jpg" alt="舞者 D">
             <h3>舞者 D</h3>
-            <p id="votes-dancer2-battle2">票数: 0</p>
+            <div id="votes-dancer2-battle2">0 票</div>
           </div>
         </div>
-        <canvas id="vote-chart-battle2" style="max-width: 600px; margin: 30px auto;"></canvas>
+        <canvas id="vote-chart-battle2"></canvas>
       </section>
 
       <!-- 10. 上手实操 -->
       <section id="grouping">
         <h2>上手实操 - 扫码分组</h2>
-        <div class="qrcode">
-          <div id="qr-group"></div>
+        <div>
+          <div id="qr-group" class="qrcode"></div>
           <p>扫码加入分组</p>
         </div>
-        <div id="group-display"></div>
+        <div id="group-display" class="group-display"></div>
       </section>
 
       <!-- 11. 抽奖 -->
       <section id="lottery">
         <h2>抽奖环节</h2>
-        <div class="qrcode">
-          <div id="qr-lottery"></div>
+        <div>
+          <div id="qr-lottery" class="qrcode"></div>
           <p>扫码参与抽奖</p>
-          <p id="lottery-count">已参与人数: 0</p>
+          <p>已参与人数：<span id="lottery-count">0</span></p>
         </div>
-        <div id="lottery-rolling"></div>
-        <p style="font-size: 0.8em; margin-top: 20px;">按空格键开始/停止抽奖</p>
+        <div id="lottery-rolling" class="lottery-rolling"></div>
+        <p style="font-size: 0.8em;">按空格键开始/停止抽奖</p>
         <div id="lottery-winners" class="lottery-winners"></div>
       </section>
 
       <!-- 12. 结束页 -->
       <section id="end">
         <h1>感谢参与！</h1>
-        <p>Wota 艺，让我们一起闪耀</p>
+        <p>Wota 艺基础讲座</p>
       </section>
     </div>
   </div>
@@ -183,9 +179,5 @@
   <!-- Local scripts -->
   <script src="js/config.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/voting.js"></script>
-  <script src="js/grouping.js"></script>
-  <script src="js/lottery.js"></script>
-  <script src="js/main.js"></script>
 </body>
 </html>
