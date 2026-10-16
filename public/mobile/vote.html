@@ -10,75 +10,68 @@
   <div class="container">
     <h1 id="battle-title">投票</h1>
 
-    <div id="vote-buttons"></div>
-
-    <div id="message-container"></div>
+    <div id="dancers-container"></div>
   </div>
 
   <script src="js/mobile.js"></script>
   <script>
-    const { nickname, deviceId } = checkNickname();
+    const user = checkNickname();
+    if (!user) return;
 
-    // 从 URL 获取 battleId
+    // 获取 battleId
     const params = new URLSearchParams(window.location.search);
     const battleId = params.get('battle') || 'battle1';
 
     document.getElementById('battle-title').textContent =
       battleId === 'battle1' ? 'BATTLE 1 投票' : 'BATTLE 2 投票';
 
-    // 获取舞者信息
+    // 加载舞者信息
     fetchWithErrorHandling(`${API_BASE_URL}/vote/${battleId}`)
       .then(data => {
         if (!data) return;
 
-        const buttonsContainer = document.getElementById('vote-buttons');
+        const container = document.getElementById('dancers-container');
+        container.innerHTML = `
+          <button class="dancer-btn" data-dancer="dancer1">
+            <img src="${data.dancer1.avatar}" alt="${data.dancer1.name}">
+            <span>${data.dancer1.name}</span>
+          </button>
+          <button class="dancer-btn" data-dancer="dancer2">
+            <img src="${data.dancer2.avatar}" alt="${data.dancer2.name}">
+            <span>${data.dancer2.name}</span>
+          </button>
+        `;
 
-        // 创建两个投票按钮
-        ['dancer1', 'dancer2'].forEach(dancer => {
-          const info = data[dancer];
-          const button = document.createElement('button');
-          button.className = 'dancer-btn';
-          button.innerHTML = `
-            <img src="${info.avatar}" alt="${info.name}" onerror="this.style.display='none'">
-            <span>${info.name}</span>
-            <span style="font-size: 0.9em;">投 TA 一票</span>
-          `;
-
-          button.addEventListener('click', async () => {
-            button.disabled = true;
-            button.textContent = '提交中...';
-
-            const result = await fetchWithErrorHandling(`${API_BASE_URL}/vote`, {
-              method: 'POST',
-              body: JSON.stringify({
-                battleId,
-                dancer,
-                deviceId
-              })
-            });
-
-            const messageContainer = document.getElementById('message-container');
-            messageContainer.innerHTML = '';
-
-            if (result) {
-              if (result.success) {
-                showMessage('✅ 投票成功！', 'success');
-                buttonsContainer.style.display = 'none';
-              }
-            } else {
-              // 检查是否是 409 错误（已投票）
-              button.disabled = false;
-              button.innerHTML = `
-                <img src="${info.avatar}" alt="${info.name}" onerror="this.style.display='none'">
-                <span>${info.name}</span>
-                <span style="font-size: 0.9em;">投 TA 一票</span>
-              `;
-            }
-          });
-
-          buttonsContainer.appendChild(button);
+        // 绑定投票事件
+        document.querySelectorAll('.dancer-btn').forEach(btn => {
+          btn.addEventListener('click', () => vote(btn.dataset.dancer));
         });
       });
+
+    async function vote(dancer) {
+      const buttons = document.querySelectorAll('.dancer-btn');
+      buttons.forEach(btn => btn.disabled = true);
+
+      const result = await fetchWithErrorHandling(`${API_BASE_URL}/vote`, {
+        method: 'POST',
+        body: JSON.stringify({
+          battleId,
+          dancer,
+          deviceId: user.deviceId
+        })
+      });
+
+      if (result && result.success) {
+        showMessage('投票成功！', 'success');
+      } else {
+        // 如果是 409 错误（已投票）
+        if (result === null) {
+          buttons.forEach(btn => btn.disabled = false);
+        } else {
+          showMessage('您已经投过票了', 'info');
+        }
+      }
+    }
   </script>
 </body>
 </html>

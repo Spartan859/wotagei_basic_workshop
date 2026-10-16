@@ -8,20 +8,16 @@
 </head>
 <body>
   <div class="container">
-    <h1>欢迎参与</h1>
-    <h2>Wota 艺基础讲座</h2>
+    <h1>欢迎参与 Wota 艺基础讲座</h1>
+    <h2>请输入您的昵称</h2>
 
     <form id="nickname-form">
-      <label for="nickname-input" style="display: block; margin-bottom: 8px; color: #555;">
-        请输入您的昵称
-      </label>
       <input
         type="text"
         id="nickname-input"
-        placeholder="2-10个字符"
+        placeholder="请输入昵称 (2-10个字符)"
         maxlength="10"
         required
-        autofocus
       >
       <button type="submit">确认</button>
     </form>
@@ -43,13 +39,13 @@
         return;
       }
 
-      // 生成 deviceId 并保存
+      // 保存
       const deviceId = generateDeviceId();
       localStorage.setItem('userNickname', nickname);
       localStorage.setItem('deviceId', deviceId);
 
-      // 跳转到目标页面
-      const redirectUrl = localStorage.getItem('redirectAfterNickname') || '/mobile/';
+      // 跳转
+      const redirectUrl = localStorage.getItem('redirectAfterNickname') || '/mobile/index.html';
       localStorage.removeItem('redirectAfterNickname');
       window.location.href = redirectUrl;
     });
