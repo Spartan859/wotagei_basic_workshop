@@ -6,18 +6,16 @@
   border-radius: 8px;
 }
 
-/* 投票容器 */
+/* 投票布局 */
 .vote-container {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 100%;
+  margin-top: 30px;
 }
 
-/* 舞者信息 */
 .dancer-info {
   text-align: center;
-  flex: 1;
 }
 
 .dancer-info img {
@@ -25,38 +23,15 @@
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 10px;
-}
-
-/* 投票图表 */
-#vote-chart-battle1,
-#vote-chart-battle2 {
-  min-height: 300px;
-}
-
-/* 流派对比 */
-.styles-comparison {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.style-column {
-  text-align: center;
-  flex: 1;
-}
-
-.style-column img {
-  max-width: 300px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 /* 分组显示 */
-#group-display {
+.group-display {
   display: flex;
   justify-content: space-around;
-  flex-wrap: wrap;
   margin-top: 30px;
+  flex-wrap: wrap;
 }
 
 .group-column {
@@ -70,6 +45,8 @@
 
 .group-column h3 {
   margin-top: 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 10px;
 }
 
 .group-column ul {
@@ -80,11 +57,10 @@
 
 .group-column li {
   padding: 5px 0;
-  font-size: 0.9em;
 }
 
 /* 抽奖 */
-#lottery-rolling {
+.lottery-rolling {
   font-size: 3em;
   font-weight: bold;
   min-height: 100px;
@@ -103,14 +79,30 @@
   display: inline-block;
   margin: 0 10px;
   color: #ffd700;
-  animation: pulse 1s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
+/* 图表 */
+#vote-chart-battle1,
+#vote-chart-battle2 {
+  min-height: 300px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 流派对比 */
+.styles-comparison {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.style-column {
+  text-align: center;
+  flex: 1;
+}
+
+.style-column img {
+  max-width: 300px;
+  margin: 20px 0;
 }
