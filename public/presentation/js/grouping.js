@@ -11,11 +11,6 @@ function startGroupPolling() {
       console.error('分组数据获取失败:', error);
     }
   }, 5000);
-
-  // 立即获取一次数据
-  axios.get(`${API_BASE_URL}/group/status`)
-    .then(response => updateGroupDisplay(response.data))
-    .catch(error => console.error('初始分组数据获取失败:', error));
 }
 
 function stopGroupPolling() {
@@ -36,11 +31,10 @@ function updateGroupDisplay(data) {
       <div class="group-column">
         <h3>第 ${i} 组 (${group.count}人)</h3>
         <ul>
-          ${group.members.map(name => `<li>· ${escapeHtml(name)}</li>`).join('')}
+          ${group.members.map(name => `<li>${escapeHtml(name)}</li>`).join('')}
         </ul>
       </div>
     `;
   }
-
   container.innerHTML = html;
 }

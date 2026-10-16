@@ -1,6 +1,5 @@
 let lotteryAnimation = null;
 let isDrawing = false;
-let allParticipants = [];
 
 function startLotteryAnimation() {
   if (isDrawing) {
@@ -11,82 +10,72 @@ function startLotteryAnimation() {
   isDrawing = true;
   const display = document.getElementById('lottery-rolling');
 
-  // 获取参与者列表
-  axios.get(`${API_BASE_URL}/lottery/status`)
-    .then(response => {
-      allParticipants = response.data.participantCount > 0
-        ? Array(response.data.participantCount).fill(0).map((_, i) => `参与者 ${i + 1}`)
-        : ['暂无参与者'];
+  // 获取所有参与者
+  axios.get(`${API_BASE_URL}/lottery/status`).then(response => {
+    const participants = response.data.participantCount > 0 ?
+      Array(response.data.participantCount).fill(0).map((_, i) => `参与者 ${i + 1}`) :
+      ['等待参与...'];
 
-      let index = 0;
-      lotteryAnimation = setInterval(() => {
-        display.textContent = allParticipants[index % allParticipants.length];
-        index++;
-      }, 50);
-    })
-    .catch(error => {
-      console.error('获取参与者失败:', error);
-      display.textContent = '获取数据失败';
-      isDrawing = false;
-    });
+    let index = 0;
+    lotteryAnimation = setInterval(() => {
+      display.textContent = participants[index % participants.length];
+      index++;
+    }, 50);
+  }).catch(error => {
+    console.error('获取参与者失败:', error);
+    isDrawing = false;
+  });
 }
 
-function stopLotteryAnimation() {
+async function stopLotteryAnimation() {
   if (!isDrawing) return;
 
   clearInterval(lotteryAnimation);
   isDrawing = false;
 
-  const display = document.getElementById('lottery-rolling');
-  display.textContent = '抽奖中...';
-
   // 调用抽奖 API
-  axios.post(`${API_BASE_URL}/lottery/draw`, {
-    adminToken: ADMIN_TOKEN
-  })
-    .then(response => {
-      displayWinners(response.data.winners);
-    })
-    .catch(error => {
-      console.error('抽奖失败:', error);
-      display.textContent = '抽奖失败，请重试';
+  try {
+    const response = await axios.post(`${API_BASE_URL}/lottery/draw`, {
+      adminToken: ADMIN_TOKEN
     });
+
+    displayWinners(response.data.winners);
+  } catch (error) {
+    console.error('抽奖失败:', error);
+    alert('抽奖失败: ' + (error.response?.data?.error || error.message));
+  }
 }
 
 function displayWinners(winners) {
-  const container = document.getElementById('lottery-winners');
-
-  if (winners.length === 0) {
-    container.innerHTML = '<p>暂无中奖者</p>';
-    return;
-  }
-
-  // 处理重名：相同昵称加序号
-  const nameCounts = {};
+  // 处理重名（Review Focus #3）
+  const winnerCounts = {};
   const displayNames = [];
 
   winners.forEach(name => {
-    if (nameCounts[name]) {
-      nameCounts[name]++;
-      displayNames.push(`${escapeHtml(name)} (${nameCounts[name]})`);
+    if (winnerCounts[name]) {
+      winnerCounts[name]++;
+      displayNames.push(`${escapeHtml(name)} (${winnerCounts[name]})`);
     } else {
-      nameCounts[name] = 1;
+      winnerCounts[name] = 1;
       displayNames.push(escapeHtml(name));
     }
   });
 
-  container.innerHTML = '<h3>🎉 中奖者 🎉</h3>' +
-    displayNames.map(name => `<span class="winner">⭐ ${name}</span>`).join(' ');
+  const container = document.getElementById('lottery-winners');
+  container.innerHTML = displayNames.map(name =>
+    `<span class="winner">⭐ ${name}</span>`
+  ).join(' ');
+
+  // 清空滚动显示
+  document.getElementById('lottery-rolling').textContent = '';
 }
 
-// 更新抽奖参与人数
-function updateLotteryCount() {
-  axios.get(`${API_BASE_URL}/lottery/status`)
-    .then(response => {
-      const countEl = document.getElementById('lottery-count');
-      if (countEl) {
-        countEl.textContent = `已参与人数: ${response.data.participantCount}`;
-      }
-    })
-    .catch(error => console.error('获取抽奖状态失败:', error));
+// 更新参与人数
+async function updateLotteryCount() {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/lottery/status`);
+    document.getElementById('lottery-count').textContent = response.data.participantCount;
+  } catch (error) {
+    console.error('获取抽奖人数失败:', error);
+  }
 }

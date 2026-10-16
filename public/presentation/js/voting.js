@@ -1,4 +1,5 @@
 let votePolling = null;
+let voteCharts = {};
 const lastSuccessfulData = {};
 
 function startVotePolling(battleId) {
@@ -17,14 +18,6 @@ function startVotePolling(battleId) {
       }
     }
   }, 3000);
-
-  // 立即获取一次数据
-  axios.get(`${API_BASE_URL}/vote/${battleId}`)
-    .then(response => {
-      updateVoteChart(response.data, battleId);
-      lastSuccessfulData[battleId] = response.data;
-    })
-    .catch(error => console.error('初始投票数据获取失败:', error));
 }
 
 function stopVotePolling() {
@@ -34,19 +27,13 @@ function stopVotePolling() {
   }
 }
 
-let voteCharts = {};
-
 function updateVoteChart(data, battleId) {
-  const canvasId = `vote-chart-${battleId}`;
-  const ctx = document.getElementById(canvasId);
-
+  const ctx = document.getElementById(`vote-chart-${battleId}`);
   if (!ctx) return;
 
   // 更新票数显示
-  const votes1 = document.getElementById(`votes-dancer1-${battleId}`);
-  const votes2 = document.getElementById(`votes-dancer2-${battleId}`);
-  if (votes1) votes1.textContent = `票数: ${data.dancer1.votes}`;
-  if (votes2) votes2.textContent = `票数: ${data.dancer2.votes}`;
+  document.getElementById(`votes-dancer1-${battleId}`).textContent = `${data.dancer1.votes} 票`;
+  document.getElementById(`votes-dancer2-${battleId}`).textContent = `${data.dancer2.votes} 票`;
 
   if (voteCharts[battleId]) {
     // 更新现有图表
@@ -72,7 +59,7 @@ function updateVoteChart(data, battleId) {
             beginAtZero: true,
             ticks: {
               stepSize: 1,
-              color: '#fff'
+              color: '#ffffff'
             },
             grid: {
               color: 'rgba(255, 255, 255, 0.1)'
@@ -80,7 +67,7 @@ function updateVoteChart(data, battleId) {
           },
           x: {
             ticks: {
-              color: '#fff'
+              color: '#ffffff'
             },
             grid: {
               color: 'rgba(255, 255, 255, 0.1)'
@@ -89,7 +76,9 @@ function updateVoteChart(data, battleId) {
         },
         plugins: {
           legend: {
-            display: false
+            labels: {
+              color: '#ffffff'
+            }
           }
         }
       }
