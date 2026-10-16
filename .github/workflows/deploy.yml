@@ -22,6 +22,7 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment:
       name: production
       url: https://wotagei.satintin.com
@@ -54,11 +55,11 @@ jobs:
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Upload deploy script
+      - name: Update deploy script on server
         run: |
-          scp -i ~/.ssh/deploy_key deploy/wotagei-compose-deploy.sh wotagei-deploy@120.77.57.144:/tmp/
-          ssh -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
-            "sudo install -m 755 /tmp/wotagei-compose-deploy.sh /usr/local/sbin/wotagei-compose-deploy"
+          ssh -T -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
+            "sudo -n /usr/local/sbin/wotagei-compose-deploy --install-self" \
+            < deploy/wotagei-compose-deploy.sh
 
       - name: Deploy Docker Compose
         env:
@@ -66,5 +67,14 @@ jobs:
         run: |
           ssh -tt -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
             "sudo -n /usr/local/sbin/wotagei-compose-deploy '$RELEASE_ID'"
-          curl --fail --silent --show-error --retry 10 --retry-delay 2 \
-            https://wotagei.satintin.com/presentation/index.html
+
+      # 经 nginx 反代验证（wotagei.satintin.com 的 DNS 记录尚未配置，
+      # 直连域名会失败，因此用 Host 头走本机 80 端口验证整条链路）
+      - name: Verify service through nginx
+        run: |
+          ssh -T -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
+            "curl -fsS --max-time 10 -H 'Host: wotagei.satintin.com' \
+               http://127.0.0.1/presentation/index.html | head -5"
+          ssh -T -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
+            "curl -fsS --max-time 10 -H 'Host: wotagei.satintin.com' \
+               http://127.0.0.1/api/vote/battle1"
