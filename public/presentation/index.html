@@ -15,9 +15,155 @@
 <body>
   <div class="reveal">
     <div class="slides">
-      <section>
+      <!-- 1. 封面页 -->
+      <section id="cover">
         <h1>Wota艺基础讲座</h1>
         <p>荧光棒舞蹈互动体验</p>
+      </section>
+
+      <!-- 2. BATTLE 1 准备 -->
+      <section id="battle1-intro">
+        <h2>BATTLE 1</h2>
+        <div class="vote-container">
+          <div class="dancer-info">
+            <img src="assets/images/dancer-a.jpg" alt="舞者 A">
+            <h3>舞者 A</h3>
+          </div>
+          <div class="dancer-info">
+            <img src="assets/images/dancer-b.jpg" alt="舞者 B">
+            <h3>舞者 B</h3>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. BATTLE 1 音乐 -->
+      <section id="battle1-music" data-background="#000">
+        <h2 style="color: white;">BATTLE 1 音乐</h2>
+        <audio controls style="width: 80%; margin-top: 50px;">
+          <source src="assets/music/battle1.mp3" type="audio/mpeg">
+          您的浏览器不支持音频播放。
+        </audio>
+      </section>
+
+      <!-- 4. BATTLE 1 投票 -->
+      <section id="vote-battle1">
+        <h2>BATTLE 1 投票</h2>
+        <div class="vote-container">
+          <div class="dancer-info">
+            <img src="assets/images/dancer-a.jpg" alt="舞者 A">
+            <h3>舞者 A</h3>
+            <p id="votes-dancer1-battle1">票数: 0</p>
+          </div>
+          <div class="qrcode">
+            <div id="qr-vote-battle1"></div>
+            <p>扫码投票</p>
+          </div>
+          <div class="dancer-info">
+            <img src="assets/images/dancer-b.jpg" alt="舞者 B">
+            <h3>舞者 B</h3>
+            <p id="votes-dancer2-battle1">票数: 0</p>
+          </div>
+        </div>
+        <canvas id="vote-chart-battle1" style="max-width: 600px; margin: 30px auto;"></canvas>
+      </section>
+
+      <!-- 5. 视频播放 -->
+      <section id="video">
+        <h2>Wota 艺演示视频</h2>
+        <video controls style="width: 80%; max-height: 70vh;">
+          <source src="assets/videos/demo.mp4" type="video/mp4">
+          您的浏览器不支持视频播放。
+        </video>
+      </section>
+
+      <!-- 6. 流派对比 -->
+      <section id="styles-comparison">
+        <h2>Wota 艺两大流派</h2>
+        <div class="styles-comparison">
+          <div class="style-column">
+            <h3>关西</h3>
+            <img src="assets/images/kansai-logo.png" alt="关西流派">
+          </div>
+          <div class="style-column">
+            <h3>火把</h3>
+            <img src="assets/images/torch-logo.png" alt="火把流派">
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. BATTLE 2 准备 -->
+      <section id="battle2-intro">
+        <h2>BATTLE 2</h2>
+        <div class="vote-container">
+          <div class="dancer-info">
+            <img src="assets/images/dancer-c.jpg" alt="舞者 C">
+            <h3>舞者 C</h3>
+          </div>
+          <div class="dancer-info">
+            <img src="assets/images/dancer-d.jpg" alt="舞者 D">
+            <h3>舞者 D</h3>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. BATTLE 2 音乐 -->
+      <section id="battle2-music" data-background="#000">
+        <h2 style="color: white;">BATTLE 2 音乐</h2>
+        <audio controls style="width: 80%; margin-top: 50px;">
+          <source src="assets/music/battle2.mp3" type="audio/mpeg">
+          您的浏览器不支持音频播放。
+        </audio>
+      </section>
+
+      <!-- 9. BATTLE 2 投票 -->
+      <section id="vote-battle2">
+        <h2>BATTLE 2 投票</h2>
+        <div class="vote-container">
+          <div class="dancer-info">
+            <img src="assets/images/dancer-c.jpg" alt="舞者 C">
+            <h3>舞者 C</h3>
+            <p id="votes-dancer1-battle2">票数: 0</p>
+          </div>
+          <div class="qrcode">
+            <div id="qr-vote-battle2"></div>
+            <p>扫码投票</p>
+          </div>
+          <div class="dancer-info">
+            <img src="assets/images/dancer-d.jpg" alt="舞者 D">
+            <h3>舞者 D</h3>
+            <p id="votes-dancer2-battle2">票数: 0</p>
+          </div>
+        </div>
+        <canvas id="vote-chart-battle2" style="max-width: 600px; margin: 30px auto;"></canvas>
+      </section>
+
+      <!-- 10. 上手实操 -->
+      <section id="grouping">
+        <h2>上手实操 - 扫码分组</h2>
+        <div class="qrcode">
+          <div id="qr-group"></div>
+          <p>扫码加入分组</p>
+        </div>
+        <div id="group-display"></div>
+      </section>
+
+      <!-- 11. 抽奖 -->
+      <section id="lottery">
+        <h2>抽奖环节</h2>
+        <div class="qrcode">
+          <div id="qr-lottery"></div>
+          <p>扫码参与抽奖</p>
+          <p id="lottery-count">已参与人数: 0</p>
+        </div>
+        <div id="lottery-rolling"></div>
+        <p style="font-size: 0.8em; margin-top: 20px;">按空格键开始/停止抽奖</p>
+        <div id="lottery-winners" class="lottery-winners"></div>
+      </section>
+
+      <!-- 12. 结束页 -->
+      <section id="end">
+        <h1>感谢参与！</h1>
+        <p>Wota 艺，让我们一起闪耀</p>
       </section>
     </div>
   </div>
