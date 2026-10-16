@@ -1,4 +1,4 @@
 <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="300" fill="#FFD93D"/>
-  <text x="200" y="150" font-size="48" fill="#333" text-anchor="middle" dy=".3em">关西</text>
+  <rect width="400" height="300" fill="#9966FF"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="48" font-family="sans-serif" font-weight="bold">关西</text>
 </svg>

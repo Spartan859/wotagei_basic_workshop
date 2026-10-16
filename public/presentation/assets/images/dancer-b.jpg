@@ -1,4 +1,4 @@
 <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#4ECDC4"/>
-  <text x="100" y="100" font-size="60" fill="white" text-anchor="middle" dy=".3em">B</text>
+  <rect width="200" height="200" fill="#36A2EB"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="24" font-family="sans-serif">舞者 B</text>
 </svg>
