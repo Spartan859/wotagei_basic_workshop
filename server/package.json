@@ -17,7 +17,18 @@
   "devDependencies": {
     "nodemon": "^2.0.22"
   },
-  "keywords": ["wota", "presentation", "vote", "lottery", "reveal.js", "interactive"],
-  "author": "Wota艺讲座项目",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/wotagei-workshop"
+  },
+  "keywords": [
+    "wota",
+    "presentation",
+    "vote",
+    "lottery",
+    "reveal.js",
+    "interactive"
+  ],
+  "author": "Your Name",
   "license": "MIT"
 }
