@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -14,7 +15,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test and Build
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,14 +32,14 @@ jobs:
       - name: Start server for testing
         run: |
           cd server
-          node app.js &
+          PORT=3000 node app.js &
           SERVER_PID=$!
           sleep 3
           echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
 
       - name: Health check
         run: |
-          curl -f http://localhost:3000/ || echo "Server is running"
+          curl -f http://localhost:3000/presentation/index.html | head -5
           curl -f http://localhost:3000/api/vote/battle1
 
       - name: Stop server
@@ -51,6 +52,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     needs: test
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
