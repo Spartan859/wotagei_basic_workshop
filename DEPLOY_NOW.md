@@ -83,7 +83,7 @@ ssh wotagei-deploy@120.77.57.144 "cd /opt/wotagei-workshop && docker compose ps"
 ssh satintin "cat /opt/wotagei-workshop/.env | grep ADMIN_TOKEN"
 ```
 
-然后更新 `public/presentation/js/config.js` 中的 `ADMIN_TOKEN` 值。
+演示端第一次使用管理功能（G / L / R / 抽奖）时会弹框询问，填入该值即可，无需改代码。
 
 ## 🎯 快速命令
 

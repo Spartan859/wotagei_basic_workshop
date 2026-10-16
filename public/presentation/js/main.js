@@ -78,7 +78,7 @@ document.querySelector('.reveal').addEventListener('click', (e) => {
 });
 
 // 分组配置
-function openGroupConfigModal() {
+async function openGroupConfigModal() {
   const newCount = prompt('请输入新的组数 (1-20):', '3');
   if (newCount === null) return;
 
@@ -88,22 +88,26 @@ function openGroupConfigModal() {
     return;
   }
 
-  axios.put(`${API_BASE_URL}/group/config`, {
-    groupCount: count,
-    adminToken: ADMIN_TOKEN
-  }).then(() => {
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
+  try {
+    await axios.put(`${API_BASE_URL}/group/config`, {
+      groupCount: count,
+      adminToken
+    });
     alert('组数配置成功');
     if (Reveal.getCurrentSlide().id === 'grouping') {
       stopGroupPolling();
       startGroupPolling();
     }
-  }).catch(error => {
-    alert('配置失败: ' + (error.response?.data?.error || error.message));
-  });
+  } catch (error) {
+    alert('配置失败: ' + describeAdminError(error));
+  }
 }
 
 // 抽奖配置
-function openLotteryConfigModal() {
+async function openLotteryConfigModal() {
   const newCount = prompt('请输入抽奖人数 (1-100):', '3');
   if (newCount === null) return;
 
@@ -113,18 +117,22 @@ function openLotteryConfigModal() {
     return;
   }
 
-  axios.put(`${API_BASE_URL}/lottery/config`, {
-    drawCount: count,
-    adminToken: ADMIN_TOKEN
-  }).then(() => {
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
+  try {
+    await axios.put(`${API_BASE_URL}/lottery/config`, {
+      drawCount: count,
+      adminToken
+    });
     alert('抽奖人数配置成功');
-  }).catch(error => {
-    alert('配置失败: ' + (error.response?.data?.error || error.message));
-  });
+  } catch (error) {
+    alert('配置失败: ' + describeAdminError(error));
+  }
 }
 
 // 重置数据
-function confirmAndResetData() {
+async function confirmAndResetData() {
   const currentSlide = Reveal.getCurrentSlide();
   const slideId = currentSlide.id;
 
@@ -145,15 +153,17 @@ function confirmAndResetData() {
     return;
   }
 
-  if (confirm(`确定要重置${moduleName}吗？此操作不可恢复！`)) {
-    axios.post(`${API_BASE_URL}/reset/${moduleKey}`, {
-      adminToken: ADMIN_TOKEN
-    }).then(() => {
-      alert('重置成功');
-      location.reload();
-    }).catch(error => {
-      alert('重置失败: ' + (error.response?.data?.error || error.message));
-    });
+  if (!confirm(`确定要重置${moduleName}吗？此操作不可恢复！`)) return;
+
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
+  try {
+    await axios.post(`${API_BASE_URL}/reset/${moduleKey}`, { adminToken });
+    alert('重置成功');
+    location.reload();
+  } catch (error) {
+    alert('重置失败: ' + describeAdminError(error));
   }
 }
 

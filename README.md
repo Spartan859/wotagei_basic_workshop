@@ -38,12 +38,11 @@ npm run dev
 ### 生产环境注意事项
 
 1. **修改 ADMIN_TOKEN**：在 `.env` 中设置强密码
-2. **修改域名配置**：编辑 `public/presentation/js/config.js`
-   ```javascript
-   const API_BASE_URL = 'https://your-domain.com/api';
-   const QR_BASE_URL = 'https://your-domain.com/mobile';
-   ```
-3. **启用 HTTPS**：使用 Nginx + Let's Encrypt
+2. **域名无需配置**：演示端与移动端的 API 地址、二维码地址都按 `window.location.origin` 推导，
+   用什么域名打开演示端，二维码就指向同一个域名。
+3. **管理员令牌运行时输入**：演示端第一次使用 `G` / `L` / `R` / 抽奖时会弹框询问 `ADMIN_TOKEN`
+   （填服务器 `.env` 里的值），本标签页内缓存，令牌错误会自动清除并重新询问。不要把令牌写进代码。
+4. **启用 HTTPS**：使用 Nginx + Let's Encrypt
 
 ## 功能特性
 

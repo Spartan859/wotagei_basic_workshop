@@ -77,7 +77,7 @@ curl http://120.77.57.144:3000/presentation/index.html
    cat /opt/wotagei-workshop/.env | grep ADMIN_TOKEN
    ```
    
-   然后更新演示端配置 `public/presentation/js/config.js` 中的 `ADMIN_TOKEN`
+   演示端第一次使用管理功能（G / L / R / 抽奖）时会弹框询问，填入该值即可，无需改代码。
 
 ## 本地 Docker 测试
 

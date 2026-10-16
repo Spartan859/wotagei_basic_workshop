@@ -26,39 +26,42 @@
 
   <script src="js/mobile.js"></script>
   <script>
-    const user = checkNickname();
-    if (!user) return;
+    // 包在 IIFE 里：普通 <script> 顶层不允许 return（否则整段脚本语法错误、页面空白）
+    (() => {
+      const user = checkNickname();
+      if (!user) return;
 
-    document.getElementById('user-nickname').textContent = user.nickname;
+      document.getElementById('user-nickname').textContent = user.nickname;
 
-    const joinBtn = document.getElementById('join-btn');
-    const resultContainer = document.getElementById('result-container');
+      const joinBtn = document.getElementById('join-btn');
+      const resultContainer = document.getElementById('result-container');
 
-    joinBtn.addEventListener('click', async () => {
-      joinBtn.disabled = true;
-      joinBtn.textContent = '参与中...';
+      joinBtn.addEventListener('click', async () => {
+        joinBtn.disabled = true;
+        joinBtn.textContent = '参与中...';
 
-      const result = await fetchWithErrorHandling(`${API_BASE_URL}/lottery/join`, {
-        method: 'POST',
-        body: JSON.stringify({
-          nickname: user.nickname,
-          deviceId: user.deviceId
-        })
-      });
+        const result = await fetchWithErrorHandling(`${API_BASE_URL}/lottery/join`, {
+          method: 'POST',
+          body: JSON.stringify({
+            nickname: user.nickname,
+            deviceId: user.deviceId
+          })
+        });
 
-      if (result && result.success) {
-        document.getElementById('participant-count').textContent = result.participantCount;
-        resultContainer.style.display = 'block';
-        joinBtn.style.display = 'none';
+        if (result && result.success) {
+          document.getElementById('participant-count').textContent = result.participantCount;
+          resultContainer.style.display = 'block';
+          joinBtn.style.display = 'none';
 
-        if (result.alreadyJoined) {
-          showMessage('您已经参与过了', 'info');
+          if (result.alreadyJoined) {
+            showMessage('您已经参与过了', 'info');
+          }
+        } else {
+          joinBtn.disabled = false;
+          joinBtn.textContent = '参与抽奖';
         }
-      } else {
-        joinBtn.disabled = false;
-        joinBtn.textContent = '参与抽奖';
-      }
-    });
+      });
+    })();
   </script>
 </body>
 </html>
