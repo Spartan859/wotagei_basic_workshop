@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>抽奖</title>
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+  <div class="container">
+    <h1>抽奖环节</h1>
+
+    <div class="welcome" id="welcome"></div>
+
+    <button id="join-btn">参与抽奖</button>
+
+    <div id="result-container"></div>
+  </div>
+
+  <script src="js/mobile.js"></script>
+  <script>
+    const { nickname, deviceId } = checkNickname();
+
+    document.getElementById('welcome').textContent = `${nickname}，参与抽奖`;
+
+    const joinBtn = document.getElementById('join-btn');
+    const resultContainer = document.getElementById('result-container');
+
+    joinBtn.addEventListener('click', async () => {
+      joinBtn.disabled = true;
+      joinBtn.textContent = '提交中...';
+
+      const result = await fetchWithErrorHandling(`${API_BASE_URL}/lottery/join`, {
+        method: 'POST',
+        body: JSON.stringify({
+          nickname,
+          deviceId
+        })
+      });
+
+      if (result && result.success) {
+        joinBtn.style.display = 'none';
+
+        resultContainer.innerHTML = `
+          <div class="message success">
+            ✅ ${result.alreadyJoined ? '您已参与' : '参与成功'}
+            <br>
+            请关注大屏幕
+          </div>
+          <div class="count">
+            当前参与人数: ${result.participantCount}
+          </div>
+        `;
+      } else {
+        joinBtn.disabled = false;
+        joinBtn.textContent = '重试';
+      }
+    });
+  </script>
+</body>
+</html>

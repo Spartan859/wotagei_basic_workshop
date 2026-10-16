@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投票</title>
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+  <div class="container">
+    <h1 id="battle-title">投票</h1>
+
+    <div id="vote-buttons"></div>
+
+    <div id="message-container"></div>
+  </div>
+
+  <script src="js/mobile.js"></script>
+  <script>
+    const { nickname, deviceId } = checkNickname();
+
+    // 从 URL 获取 battleId
+    const params = new URLSearchParams(window.location.search);
+    const battleId = params.get('battle') || 'battle1';
+
+    document.getElementById('battle-title').textContent =
+      battleId === 'battle1' ? 'BATTLE 1 投票' : 'BATTLE 2 投票';
+
+    // 获取舞者信息
+    fetchWithErrorHandling(`${API_BASE_URL}/vote/${battleId}`)
+      .then(data => {
+        if (!data) return;
+
+        const buttonsContainer = document.getElementById('vote-buttons');
+
+        // 创建两个投票按钮
+        ['dancer1', 'dancer2'].forEach(dancer => {
+          const info = data[dancer];
+          const button = document.createElement('button');
+          button.className = 'dancer-btn';
+          button.innerHTML = `
+            <img src="${info.avatar}" alt="${info.name}" onerror="this.style.display='none'">
+            <span>${info.name}</span>
+            <span style="font-size: 0.9em;">投 TA 一票</span>
+          `;
+
+          button.addEventListener('click', async () => {
+            button.disabled = true;
+            button.textContent = '提交中...';
+
+            const result = await fetchWithErrorHandling(`${API_BASE_URL}/vote`, {
+              method: 'POST',
+              body: JSON.stringify({
+                battleId,
+                dancer,
+                deviceId
+              })
+            });
+
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = '';
+
+            if (result) {
+              if (result.success) {
+                showMessage('✅ 投票成功！', 'success');
+                buttonsContainer.style.display = 'none';
+              }
+            } else {
+              // 检查是否是 409 错误（已投票）
+              button.disabled = false;
+              button.innerHTML = `
+                <img src="${info.avatar}" alt="${info.name}" onerror="this.style.display='none'">
+                <span>${info.name}</span>
+                <span style="font-size: 0.9em;">投 TA 一票</span>
+              `;
+            }
+          });
+
+          buttonsContainer.appendChild(button);
+        });
+      });
+  </script>
+</body>
+</html>

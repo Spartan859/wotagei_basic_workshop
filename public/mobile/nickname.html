@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设置昵称</title>
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+  <div class="container">
+    <h1>欢迎参与</h1>
+    <h2>Wota 艺基础讲座</h2>
+
+    <form id="nickname-form">
+      <label for="nickname-input" style="display: block; margin-bottom: 8px; color: #555;">
+        请输入您的昵称
+      </label>
+      <input
+        type="text"
+        id="nickname-input"
+        placeholder="2-10个字符"
+        maxlength="10"
+        required
+        autofocus
+      >
+      <button type="submit">确认</button>
+    </form>
+  </div>
+
+  <script src="js/mobile.js"></script>
+  <script>
+    const form = document.getElementById('nickname-form');
+    const input = document.getElementById('nickname-input');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const nickname = input.value.trim();
+
+      // 验证
+      if (!nickname || nickname.length < 2 || nickname.length > 10) {
+        showMessage('昵称长度应为 2-10 个字符', 'error');
+        return;
+      }
+
+      // 生成 deviceId 并保存
+      const deviceId = generateDeviceId();
+      localStorage.setItem('userNickname', nickname);
+      localStorage.setItem('deviceId', deviceId);
+
+      // 跳转到目标页面
+      const redirectUrl = localStorage.getItem('redirectAfterNickname') || '/mobile/';
+      localStorage.removeItem('redirectAfterNickname');
+      window.location.href = redirectUrl;
+    });
+  </script>
+</body>
+</html>

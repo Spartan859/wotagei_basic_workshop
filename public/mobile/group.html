@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上手实操分组</title>
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+  <div class="container">
+    <h1>上手实操分组</h1>
+
+    <div class="welcome" id="welcome"></div>
+
+    <button id="join-btn">加入分组</button>
+
+    <div id="result-container"></div>
+  </div>
+
+  <script src="js/mobile.js"></script>
+  <script>
+    const { nickname, deviceId } = checkNickname();
+
+    document.getElementById('welcome').textContent = `欢迎，${nickname}！`;
+
+    const joinBtn = document.getElementById('join-btn');
+    const resultContainer = document.getElementById('result-container');
+
+    joinBtn.addEventListener('click', async () => {
+      joinBtn.disabled = true;
+      joinBtn.textContent = '加入中...';
+
+      const result = await fetchWithErrorHandling(`${API_BASE_URL}/group/join`, {
+        method: 'POST',
+        body: JSON.stringify({
+          nickname,
+          deviceId
+        })
+      });
+
+      if (result && result.success) {
+        joinBtn.style.display = 'none';
+
+        resultContainer.innerHTML = `
+          <div class="group-info">
+            <h3>您已加入第 ${result.groupId} 组${result.alreadyJoined ? ' (已加入)' : ''}</h3>
+            <p style="margin: 10px 0; color: #666;">当前组员：</p>
+            <ul>
+              ${result.groupMembers.map(name =>
+                `<li>${name === nickname ? `<strong>${name} (你)</strong>` : name}</li>`
+              ).join('')}
+            </ul>
+          </div>
+        `;
+      } else {
+        joinBtn.disabled = false;
+        joinBtn.textContent = '重试';
+      }
+    });
+  </script>
+</body>
+</html>
