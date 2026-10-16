@@ -6,7 +6,8 @@ set -euo pipefail
 
 RELEASE_ID="${1:?missing release ID}"
 OWNER="spartan859"  # 修改为你的 GitHub 用户名（小写）
-IMAGE="ghcr.io/${OWNER}/wotagei-workshop:${RELEASE_ID}"
+# 使用南京大学 GHCR 镜像加速
+IMAGE="ghcr.nju.edu.cn/${OWNER}/wotagei-workshop:${RELEASE_ID}"
 
 COMPOSE_PROJECT="wotagei-workshop"
 DEPLOY_DIR="/opt/wotagei-workshop"
