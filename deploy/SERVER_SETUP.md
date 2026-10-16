@@ -25,6 +25,10 @@ sudo chmod 755 /usr/local/sbin/wotagei-compose-deploy
 sudo chown root:root /usr/local/sbin/wotagei-compose-deploy
 ```
 
+首次需要手动安装。之后每次部署，CI 都会用
+`sudo -n /usr/local/sbin/wotagei-compose-deploy --install-self` 把仓库里的最新脚本
+覆盖到该路径（脚本从 stdin 读取新版本），因此不需要再手工同步。
+
 ### 3. 配置 sudo 权限
 
 ```bash
