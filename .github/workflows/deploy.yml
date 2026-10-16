@@ -39,6 +39,10 @@ jobs:
             echo "sha=$CURRENT_SHA" >> "$GITHUB_OUTPUT"
           fi
 
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.revision.outputs.sha }}
+
       - name: Configure SSH
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -49,6 +53,12 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
+
+      - name: Upload deploy script
+        run: |
+          scp -i ~/.ssh/deploy_key deploy/wotagei-compose-deploy.sh wotagei-deploy@120.77.57.144:/tmp/
+          ssh -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
+            "sudo install -m 755 /tmp/wotagei-compose-deploy.sh /usr/local/sbin/wotagei-compose-deploy"
 
       - name: Deploy Docker Compose
         env:
