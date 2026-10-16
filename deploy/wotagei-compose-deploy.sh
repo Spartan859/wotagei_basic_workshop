@@ -21,7 +21,7 @@ docker pull "${IMAGE}"
 # 确保部署目录存在
 mkdir -p "${DEPLOY_DIR}"
 
-# 创建或更新 .env 文件（如果不存在）
+# 创建或更新 .env 文件
 if [[ ! -f "${ENV_FILE}" ]]; then
     cat > "${ENV_FILE}" <<EOF
 WOTAGEI_IMAGE=${IMAGE}
@@ -30,8 +30,14 @@ ADMIN_TOKEN=$(openssl rand -hex 32)
 EOF
     chmod 600 "${ENV_FILE}"
 else
-    # 更新镜像版本
-    sed -i "s|WOTAGEI_IMAGE=.*|WOTAGEI_IMAGE=${IMAGE}|" "${ENV_FILE}"
+    # 更新镜像版本（如果存在则替换，否则添加）
+    if grep -q "^WOTAGEI_IMAGE=" "${ENV_FILE}"; then
+        sed -i "s|WOTAGEI_IMAGE=.*|WOTAGEI_IMAGE=${IMAGE}|" "${ENV_FILE}"
+    else
+        echo "WOTAGEI_IMAGE=${IMAGE}" >> "${ENV_FILE}"
+    fi
+    # 确保其他必需变量存在
+    grep -q "^WOTAGEI_PORT=" "${ENV_FILE}" || echo "WOTAGEI_PORT=3000" >> "${ENV_FILE}"
 fi
 
 # 创建 docker-compose.yaml
