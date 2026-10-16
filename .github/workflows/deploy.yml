@@ -68,13 +68,9 @@ jobs:
           ssh -tt -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
             "sudo -n /usr/local/sbin/wotagei-compose-deploy '$RELEASE_ID'"
 
-      # 经 nginx 反代验证（wotagei.satintin.com 的 DNS 记录尚未配置，
-      # 直连域名会失败，因此用 Host 头走本机 80 端口验证整条链路）
-      - name: Verify service through nginx
+      - name: Verify deployment over HTTPS
         run: |
-          ssh -T -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
-            "curl -fsS --max-time 10 -H 'Host: wotagei.satintin.com' \
-               http://127.0.0.1/presentation/index.html | head -5"
-          ssh -T -i ~/.ssh/deploy_key wotagei-deploy@120.77.57.144 \
-            "curl -fsS --max-time 10 -H 'Host: wotagei.satintin.com' \
-               http://127.0.0.1/api/vote/battle1"
+          curl --fail --silent --show-error --retry 10 --retry-delay 2 \
+            https://wotagei.satintin.com/presentation/index.html | head -5
+          curl --fail --silent --show-error --retry 10 --retry-delay 2 \
+            https://wotagei.satintin.com/api/vote/battle1
