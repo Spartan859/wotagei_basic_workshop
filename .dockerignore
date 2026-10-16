@@ -1,0 +1,11 @@
+node_modules/
+.git/
+.github/
+.env
+.DS_Store
+npm-debug.log
+*.md
+docs/
+.gitignore
+TESTING.md
+LICENSE

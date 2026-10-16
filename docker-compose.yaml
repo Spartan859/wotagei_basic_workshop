@@ -1,0 +1,26 @@
+name: wotagei-workshop
+
+services:
+  app:
+    build:
+      context: .
+      target: runtime
+    image: ${WOTAGEI_IMAGE:-wotagei-workshop:local}
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-change-this-in-production}
+    ports:
+      - "127.0.0.1:${WOTAGEI_PORT:-3000}:3000"
+    init: true
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    networks: [wotagei]
+
+networks:
+  wotagei:
+    name: wotagei
