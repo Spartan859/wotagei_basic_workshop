@@ -1,10 +1,4 @@
-/* 二维码容器 */
-.qrcode {
-  display: inline-block;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-}
+/* 二维码容器样式见 theme-wotagei.css（白底框是扫码对比度所必需） */
 
 /* 投票布局 */
 .vote-container {
@@ -39,13 +33,13 @@
   min-width: 200px;
   margin: 10px;
   padding: 15px;
-  background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
 }
 
 .group-column h3 {
   margin-top: 0;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
   padding-bottom: 10px;
 }
 
@@ -61,13 +55,13 @@
 
 /* 抽奖 */
 .lottery-rolling {
-  font-size: 3em;
+  font-size: 2.4em;
   font-weight: bold;
-  min-height: 100px;
+  min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 30px 0;
+  margin: 16px 0;
 }
 
 .lottery-winners {
@@ -78,14 +72,13 @@
 .winner {
   display: inline-block;
   margin: 0 10px;
-  color: #ffd700;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 /* 图表 */
 #vote-chart-battle1,
 #vote-chart-battle2 {
-  min-height: 300px;
+  min-height: 200px;
+  max-height: 200px;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -105,4 +98,9 @@
 .style-column img {
   max-width: 300px;
   margin: 20px 0;
+}
+
+/* 音乐舞台页的内容居中 */
+.reveal section.music-stage {
+  text-align: center;
 }

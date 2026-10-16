@@ -1,10 +1,19 @@
 // 初始化 Reveal.js
 Reveal.initialize({
+  // 画布取 16:9，与原招新 PPT 的 13.333"×7.5" 一致
+  // （Reveal 默认 960×700 是 4:3 偏方，套这套模板会明显变形）
+  width: 1280,
+  height: 720,
   controls: false,
   progress: true,
   center: true,
   hash: false,
-  keyboard: true,
+  // 空格键由各页自己接管（音乐页=播放/暂停，抽奖页=开始/停止），
+  // 其余页面才照常翻页。不能只在 document 上 preventDefault ——
+  // Reveal 有自己的键盘监听，会照样翻页。
+  keyboard: {
+    32: () => handleSpaceKey()
+  },
   overview: true,
   transition: 'slide',
   transitionSpeed: 'default',
@@ -18,6 +27,9 @@ Reveal.on('slidechanged', (event) => {
   // 停止所有轮询
   stopVotePolling();
   stopGroupPolling();
+
+  // 离开音乐页时暂停播放，并按当前页同步全黑屏状态
+  handleStageSlideChange(event.currentSlide);
 
   // 根据页面启动对应轮询
   if (slideId === 'vote-battle1') {
@@ -44,18 +56,28 @@ document.addEventListener('keydown', (e) => {
     case 'r':
       confirmAndResetData();
       break;
-    case ' ':
-      if (Reveal.getCurrentSlide().id === 'lottery') {
-        e.preventDefault();
-        if (isDrawing) {
-          stopLotteryAnimation();
-        } else {
-          startLotteryAnimation();
-        }
-      }
-      break;
   }
 });
+
+// 空格键分发（由 Reveal 的 keyboard 配置调用）
+function handleSpaceKey() {
+  const currentSlide = Reveal.getCurrentSlide();
+
+  // 音乐页：播放/暂停
+  if (handleStageSpaceKey(currentSlide)) return;
+
+  // 抽奖页：开始/停止
+  if (currentSlide.id === 'lottery') {
+    if (isDrawing) {
+      stopLotteryAnimation();
+    } else {
+      startLotteryAnimation();
+    }
+    return;
+  }
+
+  Reveal.next();
+}
 
 // 点击背景切换幻灯片
 document.querySelector('.reveal').addEventListener('click', (e) => {
