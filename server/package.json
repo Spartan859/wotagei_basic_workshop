@@ -16,5 +16,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
-  }
+  },
+  "keywords": ["wota", "presentation", "vote", "lottery", "reveal.js", "interactive"],
+  "author": "Wota艺讲座项目",
+  "license": "MIT"
 }
