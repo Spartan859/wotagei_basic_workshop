@@ -1,0 +1,116 @@
+/* 二维码容器 */
+.qrcode {
+  display: inline-block;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+}
+
+/* 投票容器 */
+.vote-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+/* 舞者信息 */
+.dancer-info {
+  text-align: center;
+  flex: 1;
+}
+
+.dancer-info img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* 投票图表 */
+#vote-chart-battle1,
+#vote-chart-battle2 {
+  min-height: 300px;
+}
+
+/* 流派对比 */
+.styles-comparison {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.style-column {
+  text-align: center;
+  flex: 1;
+}
+
+.style-column img {
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+/* 分组显示 */
+#group-display {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.group-column {
+  flex: 1;
+  min-width: 200px;
+  margin: 10px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.group-column h3 {
+  margin-top: 0;
+}
+
+.group-column ul {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.group-column li {
+  padding: 5px 0;
+  font-size: 0.9em;
+}
+
+/* 抽奖 */
+#lottery-rolling {
+  font-size: 3em;
+  font-weight: bold;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.lottery-winners {
+  font-size: 2em;
+  margin-top: 20px;
+}
+
+.winner {
+  display: inline-block;
+  margin: 0 10px;
+  color: #ffd700;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
