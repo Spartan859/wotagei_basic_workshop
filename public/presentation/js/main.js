@@ -4,6 +4,7 @@ Reveal.initialize({
   // （Reveal 默认 960×700 是 4:3 偏方，套这套模板会明显变形）
   width: 1280,
   height: 720,
+  margin: 0,
   controls: false,
   progress: true,
   center: true,
@@ -20,9 +21,15 @@ Reveal.initialize({
   backgroundTransition: 'fade'
 });
 
+Reveal.on('ready', (event) => {
+  syncCoverState(event.currentSlide);
+});
+
 // 监听幻灯片切换事件（Review Focus #5）
 Reveal.on('slidechanged', (event) => {
   const slideId = event.currentSlide.id;
+
+  syncCoverState(event.currentSlide);
 
   // 停止所有轮询
   stopVotePolling();
@@ -30,6 +37,11 @@ Reveal.on('slidechanged', (event) => {
 
   // 离开音乐页时暂停播放，并按当前页同步全黑屏状态
   handleStageSlideChange(event.currentSlide);
+
+  // 回到对阵页时重新从 VS 开始，保证每次揭晓节奏一致
+  if (slideId === 'battle1-intro') {
+    resetBattleReveal(event.currentSlide);
+  }
 
   // 根据页面启动对应轮询
   if (slideId === 'vote-battle1') {
@@ -43,6 +55,46 @@ Reveal.on('slidechanged', (event) => {
     updateLotteryCount();
   }
 });
+
+Reveal.on('fragmentshown', (event) => {
+  const stage = event.fragment.closest('.battle-reveal-stage');
+  if (stage) updateBattleRevealState(stage);
+});
+
+Reveal.on('fragmenthidden', (event) => {
+  const stage = event.fragment.closest('.battle-reveal-stage');
+  if (stage) updateBattleRevealState(stage);
+});
+
+function syncCoverState(currentSlide) {
+  document.querySelector('.reveal')
+    .classList.toggle('on-cover', !!currentSlide && currentSlide.id === 'cover');
+}
+
+function resetBattleReveal(slide) {
+  const stage = slide.querySelector('.battle-reveal-stage');
+  if (!stage) return;
+
+  stage.querySelectorAll('.fragment').forEach((fragment) => {
+    fragment.classList.remove('visible', 'current-fragment');
+  });
+  updateBattleRevealState(stage);
+}
+
+function updateBattleRevealState(stage) {
+  const visibleCount = stage.querySelectorAll('.fragment.visible').length;
+  const step = visibleCount >= 2
+    ? 'track'
+    : visibleCount === 1
+      ? 'reveal'
+      : 'vs';
+
+  stage.dataset.step = step;
+  const callout = stage.querySelector('.battle-song-reveal');
+  const track = stage.querySelector('.battle-song-card');
+  if (callout) callout.setAttribute('aria-hidden', String(step !== 'reveal'));
+  if (track) track.setAttribute('aria-hidden', String(step !== 'track'));
+}
 
 // 自定义键盘事件
 document.addEventListener('keydown', (e) => {

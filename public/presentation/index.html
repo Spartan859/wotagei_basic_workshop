@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WOTA艺基础讲座</title>
+  <title>水木wota艺部基础讲座</title>
+
+  <link rel="preload" href="assets/fonts/HYHanHeiW.woff2" as="font"
+        type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/HYWenHei-85W.woff2" as="font"
+        type="font/woff2" crossorigin>
 
   <!-- Reveal.js CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
@@ -18,12 +23,26 @@
   <div class="reveal">
     <div class="slides">
       <!-- 1. 封面页 -->
-      <section id="cover"
-               data-background-image="assets/images/mizuki-dancer.png"
-               data-background-size="47% auto"
-               data-background-position="134% -1%"
-               data-background-repeat="no-repeat">
-        <h1>WOTA艺基础讲座</h1>
+      <section id="cover" class="cover-exact" data-background-color="#000">
+        <div class="cover-replica">
+          <div class="cover-stage" aria-hidden="true"></div>
+          <div class="cover-wash" aria-hidden="true"></div>
+          <div class="cover-right-glow" aria-hidden="true"></div>
+          <img class="cover-right-dancer"
+               src="assets/images/cover-dancer-right.png"
+               alt=""
+               aria-hidden="true">
+          <div class="cover-left-glow" aria-hidden="true"></div>
+          <img class="cover-left-dancer"
+               src="assets/images/cover-dancer-left.png"
+               alt=""
+               aria-hidden="true">
+          <h1 class="cover-title">
+            <span class="cover-mizuki">Mizuki</span>
+            <span class="cover-brand">水木<span class="cover-wota">wota</span>艺部</span>
+            <span class="cover-lecture">基础讲座</span>
+          </h1>
+        </div>
       </section>
 
       <!-- 2. BATTLE 1 准备 -->
@@ -34,12 +53,23 @@
             <img src="assets/images/battle1-dancer1.jpg" alt="暂定">
             <h3>暂定</h3>
           </div>
-          <figure class="battle-song-card">
-            <img class="battle-song-cover"
-                 src="assets/images/love-2000-cover.webp"
-                 alt="LOVE 2000 专辑封面">
-            <figcaption>LOVE 2000</figcaption>
-          </figure>
+          <div class="battle-reveal-stage" data-step="vs">
+            <div class="battle-reveal-item battle-vs" aria-hidden="true">VS</div>
+            <div class="fragment battle-reveal-item battle-song-reveal"
+                 data-fragment-index="0" aria-live="polite" aria-hidden="true">
+              曲目揭晓！
+            </div>
+            <figure class="fragment battle-reveal-item battle-song-card"
+                    data-fragment-index="1" aria-hidden="true">
+              <img class="battle-song-cover"
+                   src="assets/images/love-2000-cover.webp"
+                   alt="LOVE 2000 专辑封面">
+              <figcaption>
+                <strong>LOVE 2000</strong>
+                <span>BATTLE 1 · 暂定 vs 僵尸</span>
+              </figcaption>
+            </figure>
+          </div>
           <div class="dancer-info">
             <img src="assets/images/battle1-dancer2.jpg" alt="僵尸">
             <h3>僵尸</h3>
@@ -50,9 +80,25 @@
       <!-- 3. BATTLE 1 音乐（默认全黑屏，角落按键切换出控件） -->
       <section id="battle1-music" class="music-stage is-blank" data-background="#000">
         <h2>BATTLE 1 音乐</h2>
-        <div class="stage-panel">
-          <p class="track-title">LOVE 2000</p>
-          <p class="track-meta">BATTLE 1 · 暂定 vs 僵尸</p>
+        <div class="stage-panel battle-music-panel">
+          <div class="battle-music-faceoff">
+            <div class="dancer-info music-dancer">
+              <img src="assets/images/battle1-dancer1.jpg" alt="暂定">
+              <h3>暂定</h3>
+            </div>
+            <figure class="music-release">
+              <img src="assets/images/love-2000-cover.webp"
+                   alt="LOVE 2000 专辑封面">
+              <figcaption>
+                <strong>LOVE 2000</strong>
+                <span>BATTLE 1 · 暂定 vs 僵尸</span>
+              </figcaption>
+            </figure>
+            <div class="dancer-info music-dancer">
+              <img src="assets/images/battle1-dancer2.jpg" alt="僵尸">
+              <h3>僵尸</h3>
+            </div>
+          </div>
           <div class="stage-controls">
             <button class="stage-play" type="button" aria-label="播放/暂停">▶</button>
             <span class="stage-time">0:00 / 0:00</span>
