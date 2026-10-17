@@ -5,6 +5,22 @@
    - 标题：#FFFF00 重黑体 / 正文：白 常规黑体 / 强调：#FF8601 行楷
    ========================================================================== */
 
+@font-face {
+  font-family: 'HYHanHeiW';
+  src: url('../assets/fonts/HYHanHeiW.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HYWenHei-85W';
+  src: url('../assets/fonts/HYWenHei-85W.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   /* 配色（取自 PPT XML 与母版位图采样） */
   --wota-yellow: #ffff00;
@@ -17,15 +33,11 @@
   --wota-arc-pink: #df759e;
   --wota-arc-blue: #7890d8;
 
-  /* 字体：原 PPT 用汉仪汉黑W / 汉仪文黑-85W / 方正行楷简体（商业字体，
-     网页不可引用）。此处用系统字体栈近似：重字重模拟汉黑，
-     行楷链模拟方正行楷。 */
-  --wota-font-title: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
-    'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif;
-  --wota-font-body: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
-    'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif;
-  --wota-font-script: 'STXingkai', 'Xingkai SC', 'Yuanti SC', 'KaiTi',
-    'STKaiti', 'Kaiti SC', serif;
+  /* 原 PPT 使用的两套汉仪字体由项目本地自托管。 */
+  --wota-font-title: 'HYHanHeiW', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', sans-serif;
+  --wota-font-body: 'HYWenHei-85W', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', sans-serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -58,7 +70,7 @@
 .reveal h3,
 .reveal h4 {
   font-family: var(--wota-font-title);
-  font-weight: 900;
+  font-weight: 400;
   color: var(--wota-yellow);
   text-transform: none;
   letter-spacing: 0.02em;
@@ -94,31 +106,162 @@
   font-weight: 700;
 }
 
-/* 行楷强调（对应 PPT 的方正行楷简体副标题） */
+/* 副标题使用正文文黑，保留原橙色强调 */
 .reveal .wota-script {
-  font-family: var(--wota-font-script);
+  font-family: var(--wota-font-body);
   color: var(--wota-orange);
   font-weight: 400;
   letter-spacing: 0.04em;
 }
 
-/* 封面主标题。文字压在左半边，右侧给立绘留白，避免互相遮挡 */
-.reveal section#cover h1 {
-  color: var(--wota-text);
-  font-size: 2.8em;
-  line-height: 1.2;
-  letter-spacing: 0.04em;
+.reveal button,
+.reveal input,
+.reveal select,
+.reveal textarea {
+  font-family: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   封面：按原 PPT 第一页的 12192000×6858000 画布逐层复刻
+   -------------------------------------------------------------------------- */
+.reveal section#cover.cover-exact {
+  width: 1280px;
+  height: 720px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.cover-replica {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+
+.cover-stage,
+.cover-wash,
+.cover-right-glow,
+.cover-left-glow,
+.cover-right-dancer,
+.cover-left-dancer,
+.cover-title {
+  position: absolute;
+}
+
+.cover-stage {
+  left: 0;
+  top: 12.443%;
+  width: 100.012%;
+  height: 68.528%;
+  background: url('../assets/images/cover-stage.png') center / 100% 100% no-repeat;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.cover-wash {
+  left: -5.5%;
+  top: 24.105%;
+  width: 110.999%;
+  height: 62.294%;
+  background: rgba(255, 255, 255, 0.78824);
+  z-index: 2;
+}
+
+.cover-right-glow {
+  left: 76.233%;
+  top: -11.492%;
+  width: 23.020%;
+  height: 68.517%;
+  background: linear-gradient(
+    to bottom,
+    rgba(36, 55, 70, 0) 0%,
+    rgba(36, 55, 70, 0.72) 48%,
+    rgba(36, 55, 70, 0.9) 100%
+  );
+  z-index: 3;
+}
+
+.cover-right-dancer {
+  left: 76.735%;
+  top: 5.873%;
+  width: 23.719%;
+  height: 47.230%;
+  object-fit: fill;
+  z-index: 4;
+}
+
+.cover-left-glow {
+  left: 1.208%;
+  top: 57.031%;
+  width: 19.433%;
+  height: 58.490%;
+  background: linear-gradient(
+    to bottom,
+    rgba(65, 52, 71, 0) 0%,
+    rgba(65, 52, 71, 0.72) 52%,
+    rgba(65, 52, 71, 0.9) 100%
+  );
+  z-index: 5;
+}
+
+.cover-left-dancer {
+  left: 1.904%;
+  top: 57.725%;
+  width: 18.040%;
+  height: 40.335%;
+  object-fit: fill;
+  z-index: 6;
+}
+
+.reveal section#cover .cover-title {
+  left: 24.216%;
+  top: calc(34.809% + 6px);
+  width: 51.784%;
+  height: 43.082%;
   margin: 0;
+  color: #000;
+  font-family: var(--wota-font-title);
+  font-size: inherit;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  z-index: 7;
+}
+
+.cover-title > span {
+  display: block;
+}
+
+.cover-mizuki {
+  color: #ff0000;
+  font-size: 72px;
+  line-height: 1.12;
+}
+
+.cover-brand {
+  color: #7030a0;
+  font-size: 88px;
+  line-height: 1;
+  margin-top: 12px;
+}
+
+.cover-lecture {
+  color: #000;
+  font-size: 88px;
+  line-height: 1;
+  margin-top: 16px;
+}
+
+.reveal.on-cover .progress {
+  opacity: 0;
 }
 
 .reveal section#end h1 {
   color: var(--wota-text);
   font-size: 2.4em;
 }
-
-/* 封面右侧出血立绘见 index.html 中 #cover 的 data-background-image：
-   PPT 位置 左 9.5"/13.333"，宽 6.3"（47%），右边缘超出画布。
-   用 Reveal 的单页背景实现，按视口定位，不会被 section 的内容高度挤压。 */
 
 /* --------------------------------------------------------------------------
    二维码：黑底上必须是白色实心框才能扫（原设计保留，换新圆角与阴影）
@@ -194,7 +337,6 @@
    -------------------------------------------------------------------------- */
 .reveal section.music-stage {
   /* 全黑态下要让整页彻底空掉，包括标题 */
-  position: relative;
   height: 100%;
 }
 
@@ -392,11 +534,11 @@
 
 .battle-faceoff {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 300px minmax(0, 1fr);
   align-items: center;
-  width: min(980px, 88%);
+  width: min(1040px, 88%);
   margin: 28px auto 0;
-  gap: clamp(28px, 5vw, 72px);
+  gap: clamp(28px, 4vw, 58px);
 }
 
 .battle-faceoff .dancer-info {
@@ -418,12 +560,89 @@
   background: #111;
 }
 
+.battle-reveal-stage {
+  position: relative;
+  width: 300px;
+  height: 310px;
+}
+
+.battle-reveal-item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    opacity 420ms ease,
+    transform 420ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    visibility 0s linear 0s;
+}
+
+.battle-vs {
+  color: var(--wota-yellow);
+  font-family: var(--wota-font-title);
+  font-size: 6.2em;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-shadow: 0 0 34px rgba(255, 134, 1, 0.42);
+}
+
+.battle-song-reveal {
+  color: var(--wota-orange);
+  font-family: var(--wota-font-title);
+  font-size: 1.55em;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-shadow: 0 0 28px rgba(255, 134, 1, 0.38);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.8);
+}
+
+.battle-reveal-stage[data-step="reveal"] .battle-vs,
+.battle-reveal-stage[data-step="track"] .battle-vs {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.82);
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease,
+    visibility 0s linear 300ms;
+}
+
+.battle-reveal-stage[data-step="reveal"] .battle-song-reveal {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.battle-reveal-stage[data-step="track"] .battle-song-reveal {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.08);
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease,
+    visibility 0s linear 300ms;
+}
+
 .battle-song-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
   margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(28px) scale(0.94);
+}
+
+.battle-reveal-stage[data-step="track"] .battle-song-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
 }
 
 .battle-song-cover {
@@ -437,10 +656,112 @@
 }
 
 .battle-song-card figcaption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   color: var(--wota-yellow);
   font-family: var(--wota-font-title);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.battle-song-card figcaption strong {
+  color: var(--wota-yellow);
   font-size: 0.8em;
-  font-weight: 900;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.battle-song-card figcaption span {
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--wota-font-body);
+  font-size: 0.44em;
+  letter-spacing: 0.04em;
+}
+
+/* BATTLE 1 音乐页：舞者、专辑、舞者的三栏对阵式 */
+.battle-music-panel {
+  width: min(1020px, 88%);
+  text-align: center;
+}
+
+.battle-music-faceoff {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 56px);
+}
+
+.music-dancer {
+  min-width: 0;
+}
+
+.battle-music-faceoff .music-dancer img {
+  width: 132px;
+  height: 132px;
+  border: 3px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 24px rgba(120, 144, 216, 0.18);
+}
+
+.battle-music-faceoff .music-dancer h3 {
+  margin-bottom: 0;
+}
+
+.music-release {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.music-release > img {
+  width: 190px;
+  height: 190px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.55), 0 0 28px rgba(120, 144, 216, 0.22);
+}
+
+.music-release figcaption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.music-release figcaption strong {
+  color: var(--wota-yellow);
+  font-family: var(--wota-font-title);
+  font-size: 0.72em;
+  font-weight: 400;
   letter-spacing: 0.08em;
   line-height: 1;
+}
+
+.music-release figcaption span {
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--wota-font-body);
+  font-size: 0.42em;
+  letter-spacing: 0.04em;
+}
+
+.battle-music-panel .stage-controls {
+  width: min(720px, 92%);
+  margin: 30px auto 0;
+}
+
+.battle-music-panel .stage-empty {
+  margin-top: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-reveal-item,
+  .battle-reveal-stage[data-step] .battle-vs,
+  .battle-reveal-stage[data-step] .battle-song-reveal,
+  .battle-reveal-stage[data-step] .battle-song-card {
+    transition-duration: 0.001ms !important;
+  }
 }
