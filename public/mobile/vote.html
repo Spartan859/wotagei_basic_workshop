@@ -15,63 +15,66 @@
 
   <script src="js/mobile.js"></script>
   <script>
-    const user = checkNickname();
-    if (!user) return;
+    // 包在 IIFE 里：普通 <script> 顶层不允许 return（否则整段脚本语法错误、页面空白）
+    (() => {
+      const user = checkNickname();
+      if (!user) return;
 
-    // 获取 battleId
-    const params = new URLSearchParams(window.location.search);
-    const battleId = params.get('battle') || 'battle1';
+      // 获取 battleId
+      const params = new URLSearchParams(window.location.search);
+      const battleId = params.get('battle') || 'battle1';
 
-    document.getElementById('battle-title').textContent =
-      battleId === 'battle1' ? 'BATTLE 1 投票' : 'BATTLE 2 投票';
+      document.getElementById('battle-title').textContent =
+        battleId === 'battle1' ? 'BATTLE 1 投票' : 'BATTLE 2 投票';
 
-    // 加载舞者信息
-    fetchWithErrorHandling(`${API_BASE_URL}/vote/${battleId}`)
-      .then(data => {
-        if (!data) return;
+      // 加载舞者信息
+      fetchWithErrorHandling(`${API_BASE_URL}/vote/${battleId}`)
+        .then(data => {
+          if (!data) return;
 
-        const container = document.getElementById('dancers-container');
-        container.innerHTML = `
-          <button class="dancer-btn" data-dancer="dancer1">
-            <img src="${data.dancer1.avatar}" alt="${data.dancer1.name}">
-            <span>${data.dancer1.name}</span>
-          </button>
-          <button class="dancer-btn" data-dancer="dancer2">
-            <img src="${data.dancer2.avatar}" alt="${data.dancer2.name}">
-            <span>${data.dancer2.name}</span>
-          </button>
-        `;
+          const container = document.getElementById('dancers-container');
+          container.innerHTML = `
+            <button class="dancer-btn" data-dancer="dancer1">
+              <img src="${data.dancer1.avatar}" alt="${data.dancer1.name}">
+              <span>${data.dancer1.name}</span>
+            </button>
+            <button class="dancer-btn" data-dancer="dancer2">
+              <img src="${data.dancer2.avatar}" alt="${data.dancer2.name}">
+              <span>${data.dancer2.name}</span>
+            </button>
+          `;
 
-        // 绑定投票事件
-        document.querySelectorAll('.dancer-btn').forEach(btn => {
-          btn.addEventListener('click', () => vote(btn.dataset.dancer));
+          // 绑定投票事件
+          document.querySelectorAll('.dancer-btn').forEach(btn => {
+            btn.addEventListener('click', () => vote(btn.dataset.dancer));
+          });
         });
-      });
 
-    async function vote(dancer) {
-      const buttons = document.querySelectorAll('.dancer-btn');
-      buttons.forEach(btn => btn.disabled = true);
+      async function vote(dancer) {
+        const buttons = document.querySelectorAll('.dancer-btn');
+        buttons.forEach(btn => btn.disabled = true);
 
-      const result = await fetchWithErrorHandling(`${API_BASE_URL}/vote`, {
-        method: 'POST',
-        body: JSON.stringify({
-          battleId,
-          dancer,
-          deviceId: user.deviceId
-        })
-      });
+        const result = await fetchWithErrorHandling(`${API_BASE_URL}/vote`, {
+          method: 'POST',
+          body: JSON.stringify({
+            battleId,
+            dancer,
+            deviceId: user.deviceId
+          })
+        });
 
-      if (result && result.success) {
-        showMessage('投票成功！', 'success');
-      } else {
-        // 如果是 409 错误（已投票）
-        if (result === null) {
-          buttons.forEach(btn => btn.disabled = false);
+        if (result && result.success) {
+          showMessage('投票成功！', 'success');
         } else {
-          showMessage('您已经投过票了', 'info');
+          // 如果是 409 错误（已投票）
+          if (result === null) {
+            buttons.forEach(btn => btn.disabled = false);
+          } else {
+            showMessage('您已经投过票了', 'info');
+          }
         }
       }
-    }
+    })();
   </script>
 </body>
 </html>

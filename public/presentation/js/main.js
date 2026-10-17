@@ -1,10 +1,19 @@
 // 初始化 Reveal.js
 Reveal.initialize({
+  // 画布取 16:9，与原招新 PPT 的 13.333"×7.5" 一致
+  // （Reveal 默认 960×700 是 4:3 偏方，套这套模板会明显变形）
+  width: 1280,
+  height: 720,
   controls: false,
   progress: true,
   center: true,
   hash: false,
-  keyboard: true,
+  // 空格键由各页自己接管（音乐页=播放/暂停，抽奖页=开始/停止），
+  // 其余页面才照常翻页。不能只在 document 上 preventDefault ——
+  // Reveal 有自己的键盘监听，会照样翻页。
+  keyboard: {
+    32: () => handleSpaceKey()
+  },
   overview: true,
   transition: 'slide',
   transitionSpeed: 'default',
@@ -18,6 +27,9 @@ Reveal.on('slidechanged', (event) => {
   // 停止所有轮询
   stopVotePolling();
   stopGroupPolling();
+
+  // 离开音乐页时暂停播放，并按当前页同步全黑屏状态
+  handleStageSlideChange(event.currentSlide);
 
   // 根据页面启动对应轮询
   if (slideId === 'vote-battle1') {
@@ -44,18 +56,28 @@ document.addEventListener('keydown', (e) => {
     case 'r':
       confirmAndResetData();
       break;
-    case ' ':
-      if (Reveal.getCurrentSlide().id === 'lottery') {
-        e.preventDefault();
-        if (isDrawing) {
-          stopLotteryAnimation();
-        } else {
-          startLotteryAnimation();
-        }
-      }
-      break;
   }
 });
+
+// 空格键分发（由 Reveal 的 keyboard 配置调用）
+function handleSpaceKey() {
+  const currentSlide = Reveal.getCurrentSlide();
+
+  // 音乐页：播放/暂停
+  if (handleStageSpaceKey(currentSlide)) return;
+
+  // 抽奖页：开始/停止
+  if (currentSlide.id === 'lottery') {
+    if (isDrawing) {
+      stopLotteryAnimation();
+    } else {
+      startLotteryAnimation();
+    }
+    return;
+  }
+
+  Reveal.next();
+}
 
 // 点击背景切换幻灯片
 document.querySelector('.reveal').addEventListener('click', (e) => {
@@ -78,7 +100,7 @@ document.querySelector('.reveal').addEventListener('click', (e) => {
 });
 
 // 分组配置
-function openGroupConfigModal() {
+async function openGroupConfigModal() {
   const newCount = prompt('请输入新的组数 (1-20):', '3');
   if (newCount === null) return;
 
@@ -88,22 +110,26 @@ function openGroupConfigModal() {
     return;
   }
 
-  axios.put(`${API_BASE_URL}/group/config`, {
-    groupCount: count,
-    adminToken: ADMIN_TOKEN
-  }).then(() => {
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
+  try {
+    await axios.put(`${API_BASE_URL}/group/config`, {
+      groupCount: count,
+      adminToken
+    });
     alert('组数配置成功');
     if (Reveal.getCurrentSlide().id === 'grouping') {
       stopGroupPolling();
       startGroupPolling();
     }
-  }).catch(error => {
-    alert('配置失败: ' + (error.response?.data?.error || error.message));
-  });
+  } catch (error) {
+    alert('配置失败: ' + describeAdminError(error));
+  }
 }
 
 // 抽奖配置
-function openLotteryConfigModal() {
+async function openLotteryConfigModal() {
   const newCount = prompt('请输入抽奖人数 (1-100):', '3');
   if (newCount === null) return;
 
@@ -113,18 +139,22 @@ function openLotteryConfigModal() {
     return;
   }
 
-  axios.put(`${API_BASE_URL}/lottery/config`, {
-    drawCount: count,
-    adminToken: ADMIN_TOKEN
-  }).then(() => {
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
+  try {
+    await axios.put(`${API_BASE_URL}/lottery/config`, {
+      drawCount: count,
+      adminToken
+    });
     alert('抽奖人数配置成功');
-  }).catch(error => {
-    alert('配置失败: ' + (error.response?.data?.error || error.message));
-  });
+  } catch (error) {
+    alert('配置失败: ' + describeAdminError(error));
+  }
 }
 
 // 重置数据
-function confirmAndResetData() {
+async function confirmAndResetData() {
   const currentSlide = Reveal.getCurrentSlide();
   const slideId = currentSlide.id;
 
@@ -145,15 +175,17 @@ function confirmAndResetData() {
     return;
   }
 
-  if (confirm(`确定要重置${moduleName}吗？此操作不可恢复！`)) {
-    axios.post(`${API_BASE_URL}/reset/${moduleKey}`, {
-      adminToken: ADMIN_TOKEN
-    }).then(() => {
-      alert('重置成功');
-      location.reload();
-    }).catch(error => {
-      alert('重置失败: ' + (error.response?.data?.error || error.message));
-    });
+  if (!confirm(`确定要重置${moduleName}吗？此操作不可恢复！`)) return;
+
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
+  try {
+    await axios.post(`${API_BASE_URL}/reset/${moduleKey}`, { adminToken });
+    alert('重置成功');
+    location.reload();
+  } catch (error) {
+    alert('重置失败: ' + describeAdminError(error));
   }
 }
 

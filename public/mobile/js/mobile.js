@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+// 按当前访问来源推导，与演示端同域部署。
+// 写死 localhost 会让观众手机上的请求打到手机自己，投票/分组/抽奖全部失败。
+const API_BASE_URL = window.location.origin + '/api';
 
 // 生成 UUID v4
 function generateDeviceId() {

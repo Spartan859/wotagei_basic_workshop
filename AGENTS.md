@@ -200,7 +200,7 @@ npm run dev
 - 使用 PM2 管理进程
 - 配置 Nginx 反向代理（可选）
 - 启用 HTTPS（Let's Encrypt）
-- 修改 `config.js` 中的域名
+- 域名无需配置（`config.js` 按 `window.location.origin` 推导）；ADMIN_TOKEN 在演示端运行时输入
 
 ### 环境变量
 

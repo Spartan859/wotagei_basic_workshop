@@ -154,14 +154,8 @@ open https://wotagei.satintin.com/presentation/index.html
 ssh wotagei-deploy@120.77.57.144
 cat /opt/wotagei-workshop/.env | grep ADMIN_TOKEN
 
-# 2. 更新本地代码
-# 编辑 public/presentation/js/config.js
-# 将 ADMIN_TOKEN 改为服务器上的值
-
-# 3. 提交并推送
-git add public/presentation/js/config.js
-git commit -m "config: 更新生产环境 ADMIN_TOKEN"
-git push origin main
+# 2. 在演示端第一次按 G / L / R（或抽奖）时，把这个值填进弹出的输入框
+#    （本标签页内缓存；不需要、也不要改代码提交令牌）
 ```
 
 ## 🎯 首次使用

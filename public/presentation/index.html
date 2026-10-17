@@ -11,14 +11,20 @@
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/custom.css">
+  <!-- 水木wota艺部视觉主题（复刻自招新 PPT 母版） -->
+  <link rel="stylesheet" href="css/theme-wotagei.css">
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
       <!-- 1. 封面页 -->
-      <section id="cover">
-        <h1>Wota艺基础讲座</h1>
-        <p>荧光棒舞蹈互动体验</p>
+      <section id="cover"
+               data-background-image="assets/images/mizuki-dancer.png"
+               data-background-size="47% auto"
+               data-background-position="134% -1%"
+               data-background-repeat="no-repeat">
+        <h1><span class="wota-brand">Mizuki水木</span>wota艺部</h1>
+        <p class="wota-script">Wota艺基础讲座 · 荧光棒舞蹈互动体验</p>
       </section>
 
       <!-- 2. BATTLE 1 准备 -->
@@ -36,13 +42,24 @@
         </div>
       </section>
 
-      <!-- 3. BATTLE 1 音乐 -->
-      <section id="battle1-music" data-background="#000">
-        <h2 style="color: white;">BATTLE 1 音乐</h2>
-        <audio controls style="width: 80%; margin-top: 50px;">
-          <source src="assets/music/battle1.mp3" type="audio/mpeg">
-          您的浏览器不支持音频播放。
-        </audio>
+      <!-- 3. BATTLE 1 音乐（默认全黑屏，角落按键切换出控件） -->
+      <section id="battle1-music" class="music-stage is-blank" data-background="#000">
+        <h2>BATTLE 1 音乐</h2>
+        <div class="stage-panel">
+          <p class="track-title">BATTLE 1 曲目</p>
+          <p class="track-meta">舞者 A vs 舞者 B</p>
+          <div class="stage-controls">
+            <button class="stage-play" type="button" aria-label="播放/暂停">▶</button>
+            <span class="stage-time">0:00 / 0:00</span>
+            <input class="stage-seek" type="range" min="0" max="100" value="0" step="1"
+                   aria-label="播放进度" disabled>
+          </div>
+          <p class="stage-empty">音频文件缺失或无法加载</p>
+          <audio class="stage-audio" preload="metadata">
+            <source src="assets/music/battle1.mp3" type="audio/mpeg">
+          </audio>
+        </div>
+        <button class="stage-toggle" type="button" aria-label="显示音乐控件" title="显示音乐控件">♪</button>
       </section>
 
       <!-- 4. BATTLE 1 投票 -->
@@ -104,13 +121,24 @@
         </div>
       </section>
 
-      <!-- 8. BATTLE 2 音乐 -->
-      <section id="battle2-music" data-background="#000">
-        <h2 style="color: white;">BATTLE 2 音乐</h2>
-        <audio controls style="width: 80%; margin-top: 50px;">
-          <source src="assets/music/battle2.mp3" type="audio/mpeg">
-          您的浏览器不支持音频播放。
-        </audio>
+      <!-- 8. BATTLE 2 音乐（默认全黑屏，角落按键切换出控件） -->
+      <section id="battle2-music" class="music-stage is-blank" data-background="#000">
+        <h2>BATTLE 2 音乐</h2>
+        <div class="stage-panel">
+          <p class="track-title">BATTLE 2 曲目</p>
+          <p class="track-meta">舞者 C vs 舞者 D</p>
+          <div class="stage-controls">
+            <button class="stage-play" type="button" aria-label="播放/暂停">▶</button>
+            <span class="stage-time">0:00 / 0:00</span>
+            <input class="stage-seek" type="range" min="0" max="100" value="0" step="1"
+                   aria-label="播放进度" disabled>
+          </div>
+          <p class="stage-empty">音频文件缺失或无法加载</p>
+          <audio class="stage-audio" preload="metadata">
+            <source src="assets/music/battle2.mp3" type="audio/mpeg">
+          </audio>
+        </div>
+        <button class="stage-toggle" type="button" aria-label="显示音乐控件" title="显示音乐控件">♪</button>
       </section>
 
       <!-- 9. BATTLE 2 投票 -->
@@ -159,7 +187,7 @@
       <!-- 12. 结束页 -->
       <section id="end">
         <h1>感谢参与！</h1>
-        <p>Wota 艺基础讲座</p>
+        <p class="wota-script">Mizuki水木wota艺部 · 期待下次再见</p>
       </section>
     </div>
   </div>
@@ -179,6 +207,8 @@
   <!-- Local scripts -->
   <script src="js/config.js"></script>
   <script src="js/utils.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/music-stage.js"></script>
   <script src="js/voting.js"></script>
   <script src="js/grouping.js"></script>
   <script src="js/lottery.js"></script>

@@ -33,16 +33,19 @@ async function stopLotteryAnimation() {
   clearInterval(lotteryAnimation);
   isDrawing = false;
 
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
   // 调用抽奖 API
   try {
     const response = await axios.post(`${API_BASE_URL}/lottery/draw`, {
-      adminToken: ADMIN_TOKEN
+      adminToken
     });
 
     displayWinners(response.data.winners);
   } catch (error) {
     console.error('抽奖失败:', error);
-    alert('抽奖失败: ' + (error.response?.data?.error || error.message));
+    alert('抽奖失败: ' + describeAdminError(error));
   }
 }
 

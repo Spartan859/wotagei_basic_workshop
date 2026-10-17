@@ -48,7 +48,7 @@ function updateVoteChart(data, battleId) {
         datasets: [{
           label: '票数',
           data: [data.dancer1.votes, data.dancer2.votes],
-          backgroundColor: ['#FF6384', '#36A2EB']
+          backgroundColor: ['#FB921A', '#7890D8'] // 模板光弧的橙、蓝
         }]
       },
       options: {
