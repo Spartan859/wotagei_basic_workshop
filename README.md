@@ -32,8 +32,11 @@ npm run dev
 
 ### 访问
 
-- 演示端: http://localhost:3000/presentation/index.html
+- 统一入口: http://localhost:3000/
+- 演示端：电脑访问统一入口并输入 `ADMIN_TOKEN` 后进入 PPT
 - 移动端: http://localhost:3000/mobile/
+
+统一入口会根据设备判断访问方式：手机端只显示“请用 PC 访问”，电脑端必须先通过管理员令牌校验。未通过校验时，直接访问 `/presentation/index.html` 也不会返回 PPT 内容。
 
 ### 生产环境注意事项
 
