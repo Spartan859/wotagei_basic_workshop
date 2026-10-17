@@ -79,6 +79,7 @@ function updateVoteChart(data, battleId) {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
+        resizeDelay: 0,
         animation: { duration: 450 },
         scales: {
           x: {
@@ -96,6 +97,7 @@ function updateVoteChart(data, battleId) {
           y: {
             ticks: {
               color: '#ffffff',
+              autoSkip: false,
               font: { size: 18, family: 'HYWenHei-85W' }
             },
             grid: { display: false }
