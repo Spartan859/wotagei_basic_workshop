@@ -96,7 +96,7 @@ docker compose --env-file "${ENV_FILE}" up -d --remove-orphans
 
 # 等待服务就绪（最多 30s），失败时直接让流水线红掉
 for _ in $(seq 1 15); do
-    if curl -fsS --max-time 5 "http://127.0.0.1:${WOTAGEI_PORT_VALUE}/presentation/index.html" >/dev/null 2>&1; then
+    if curl -fsS --max-time 5 "http://127.0.0.1:${WOTAGEI_PORT_VALUE}/" >/dev/null 2>&1; then
         ready=1
         break
     fi
