@@ -166,6 +166,7 @@ const state = {
         avatar: '',
         votes: 0
       },
+      locked: false,           // 截票后拒绝新票，直到重置该 battle
       voters: new Set()     // 已投票的 deviceId，防重复
     },
     battle2: {
@@ -215,7 +216,27 @@ Body:  { battleId: 'battle1', dancer: 'dancer1', deviceId: 'uuid' }
 Return: { success: true, votes: { dancer1: 10, dancer2: 8 } }
 
 GET    /api/vote/:battleId
-Return: { dancer1: { name, avatar, votes }, dancer2: { ... } }
+Return: {
+  dancer1: { name, avatar, votes },
+  dancer2: { ... },
+  locked: false,
+  result: null
+}
+
+POST   /api/vote/:battleId/lock
+Body:  { adminToken: '...' }
+Return: {
+  success: true,
+  dancer1: { ... },
+  dancer2: { ... },
+  locked: true,
+  result: { type: 'winner' | 'tie', winner: 'dancer1' | 'dancer2' | null }
+}
+
+截票后 POST /api/vote 返回 409：
+{ error: '投票已结束', code: 'VOTE_LOCKED' }
+
+重复截票幂等返回同一冻结结果；重置投票会清零票数并解除冻结。
 ```
 
 #### 分组相关

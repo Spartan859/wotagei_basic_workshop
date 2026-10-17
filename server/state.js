@@ -12,6 +12,7 @@ const state = {
         avatar: '/presentation/assets/images/battle1-dancer2.jpg',
         votes: 0
       },
+      locked: false,
       voters: new Set()
     },
     battle2: {
@@ -25,6 +26,7 @@ const state = {
         avatar: '/presentation/assets/images/dancer-d.jpg',
         votes: 0
       },
+      locked: false,
       voters: new Set()
     }
   },
@@ -58,6 +60,7 @@ module.exports = {
     if (state.battles[battleId]) {
       state.battles[battleId].dancer1.votes = 0;
       state.battles[battleId].dancer2.votes = 0;
+      state.battles[battleId].locked = false;
       state.battles[battleId].voters.clear();
     }
   },
