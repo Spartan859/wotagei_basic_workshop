@@ -22,7 +22,9 @@ const presentationAccess = createPresentationAccess({ token: getState().adminTok
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 分钟
   max: 10,             // 最多 10 次请求
-  message: { error: 'Too many requests, please try again later' }
+  message: { error: 'Too many requests, please try again later' },
+  // 大屏每 3 秒轮询 GET；限流只应保护写票与截票操作。
+  skip: (req) => req.method === 'GET'
 });
 
 // 中间件
