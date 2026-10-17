@@ -76,10 +76,12 @@ function setupStageAudio(stage) {
   const playBtn = stage.querySelector('.stage-play');
   const seek = stage.querySelector('.stage-seek');
   const timeLabel = stage.querySelector('.stage-time');
+  const empty = stage.querySelector('.stage-empty');
   if (!audio || !playBtn || !seek || !timeLabel) return;
 
   const render = () => {
     const dur = audio.duration;
+    if (empty) empty.hidden = isFinite(dur) && dur > 0;
     playBtn.textContent = audio.paused ? '▶' : '❚❚';
     timeLabel.textContent = `${formatTime(audio.currentTime)} / ${formatTime(dur)}`;
     if (isFinite(dur) && dur > 0) {
@@ -118,12 +120,10 @@ function setupStageAudio(stage) {
 
   // 音频元数据到位后才拿得到时长
   audio.addEventListener('loadedmetadata', () => {
-    const empty = stage.querySelector('.stage-empty');
     if (empty) empty.hidden = true;
     render();
   });
   audio.addEventListener('error', () => {
-    const empty = stage.querySelector('.stage-empty');
     if (empty) {
       empty.hidden = false;
       empty.textContent = '音频文件缺失或无法加载';
