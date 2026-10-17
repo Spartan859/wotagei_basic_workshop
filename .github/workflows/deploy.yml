@@ -70,7 +70,16 @@ jobs:
 
       - name: Verify deployment over HTTPS
         run: |
-          curl --fail --silent --show-error --retry 10 --retry-delay 2 \
-            https://wotagei.satintin.com/presentation/index.html | head -5
+          root_status="$(curl --silent --show-error --output /tmp/root.html \
+            --write-out '%{http_code}' --retry 10 --retry-delay 2 \
+            https://wotagei.satintin.com/)"
+          test "$root_status" = "200"
+          grep -q '管理员令牌' /tmp/root.html
+
+          presentation_status="$(curl --silent --show-error --output /dev/null \
+            --write-out '%{http_code}' --retry 10 --retry-delay 2 \
+            https://wotagei.satintin.com/presentation/index.html)"
+          test "$presentation_status" = "302"
+
           curl --fail --silent --show-error --retry 10 --retry-delay 2 \
             https://wotagei.satintin.com/api/vote/battle1

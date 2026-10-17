@@ -17,8 +17,8 @@ ENV PORT=3000
 # 复制依赖和代码
 COPY --from=build /app/node_modules ./node_modules
 COPY server/package.json ./
-COPY server/*.js ./
-COPY server/routes ./routes
+COPY server/app.js server/state.js server/presentation-access.js ./server/
+COPY server/routes ./server/routes
 COPY public ./public
 
 # 创建非 root 用户
@@ -29,6 +29,6 @@ USER node
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -q -O - http://127.0.0.1:3000/presentation/index.html >/dev/null || exit 1
+  CMD wget -q -O - http://127.0.0.1:3000/ >/dev/null || exit 1
 
-CMD ["node", "app.js"]
+CMD ["node", "server/app.js"]
