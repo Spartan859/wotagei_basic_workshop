@@ -41,6 +41,7 @@ function updateVoteChart(data, battleId) {
   const name1 = document.getElementById(`vote-name-dancer1-${battleId}`);
   const name2 = document.getElementById(`vote-name-dancer2-${battleId}`);
   const total = data.dancer1.votes + data.dancer2.votes;
+  const result = stage.querySelector('.vote-result');
 
   avatar1.src = data.dancer1.avatar;
   avatar1.alt = data.dancer1.name;
@@ -53,8 +54,23 @@ function updateVoteChart(data, battleId) {
   document.getElementById(`vote-total-${battleId}`).textContent = `共 ${total} 票`;
 
   stage.classList.toggle('is-locked', data.locked);
-  lockButton.disabled = data.locked;
-  renderVoteResult(stage, data);
+  lockButton.disabled = false;
+  if (data.locked) {
+    if (!stage.classList.contains('has-result')) {
+      result.hidden = true;
+      result.innerHTML = '';
+      lockButton.hidden = false;
+      lockButton.textContent = '查看胜负';
+      lockButton.setAttribute('aria-label', '公布本场胜负或平票');
+    }
+  } else {
+    stage.classList.remove('has-result');
+    result.hidden = true;
+    result.innerHTML = '';
+    lockButton.hidden = false;
+    lockButton.textContent = '截票';
+    lockButton.setAttribute('aria-label', '截票并公布本场票数');
+  }
 
   if (voteCharts[battleId]) {
     voteCharts[battleId].data.labels = [data.dancer1.name, data.dancer2.name];
@@ -126,6 +142,7 @@ function updateVoteChart(data, battleId) {
 
 function renderVoteResult(stage, data) {
   const result = stage.querySelector('.vote-result');
+  const button = stage.querySelector('.vote-lock-button');
   if (!result) return;
 
   if (!data.locked || !data.result) {
@@ -166,6 +183,7 @@ function renderVoteResult(stage, data) {
 
   result.hidden = false;
   stage.classList.add('has-result');
+  if (button) button.hidden = true;
 }
 
 function voteResultContestant(dancer) {
@@ -200,11 +218,24 @@ async function lockBattleVote(battleId) {
   }
 }
 
+function handleVoteAction(battleId) {
+  const stage = document.getElementById(`vote-${battleId}`);
+  if (!stage) return;
+
+  if (!stage.classList.contains('is-locked')) {
+    lockBattleVote(battleId);
+    return;
+  }
+
+  const data = lastSuccessfulData[battleId];
+  if (data?.locked) renderVoteResult(stage, data);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-vote-lock]').forEach((button) => {
     button.addEventListener('click', (event) => {
       event.stopPropagation();
-      lockBattleVote(button.dataset.voteLock);
+      handleVoteAction(button.dataset.voteLock);
     });
   });
 });
