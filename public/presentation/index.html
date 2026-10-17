@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wota艺基础讲座</title>
+  <title>WOTA艺基础讲座</title>
 
   <!-- Reveal.js CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
@@ -23,21 +23,26 @@
                data-background-size="47% auto"
                data-background-position="134% -1%"
                data-background-repeat="no-repeat">
-        <h1><span class="wota-brand">Mizuki水木</span>wota艺部</h1>
-        <p class="wota-script">Wota艺基础讲座 · 荧光棒舞蹈互动体验</p>
+        <h1>WOTA艺基础讲座</h1>
       </section>
 
       <!-- 2. BATTLE 1 准备 -->
       <section id="battle1-intro">
         <h2>BATTLE 1</h2>
-        <div class="vote-container">
+        <div class="battle-faceoff">
           <div class="dancer-info">
-            <img src="assets/images/dancer-a.jpg" alt="舞者 A">
-            <h3>舞者 A</h3>
+            <img src="assets/images/battle1-dancer1.jpg" alt="暂定">
+            <h3>暂定</h3>
           </div>
+          <figure class="battle-song-card">
+            <img class="battle-song-cover"
+                 src="assets/images/love-2000-cover.webp"
+                 alt="LOVE 2000 专辑封面">
+            <figcaption>LOVE 2000</figcaption>
+          </figure>
           <div class="dancer-info">
-            <img src="assets/images/dancer-b.jpg" alt="舞者 B">
-            <h3>舞者 B</h3>
+            <img src="assets/images/battle1-dancer2.jpg" alt="僵尸">
+            <h3>僵尸</h3>
           </div>
         </div>
       </section>
@@ -46,8 +51,8 @@
       <section id="battle1-music" class="music-stage is-blank" data-background="#000">
         <h2>BATTLE 1 音乐</h2>
         <div class="stage-panel">
-          <p class="track-title">BATTLE 1 曲目</p>
-          <p class="track-meta">舞者 A vs 舞者 B</p>
+          <p class="track-title">LOVE 2000</p>
+          <p class="track-meta">BATTLE 1 · 暂定 vs 僵尸</p>
           <div class="stage-controls">
             <button class="stage-play" type="button" aria-label="播放/暂停">▶</button>
             <span class="stage-time">0:00 / 0:00</span>
@@ -56,7 +61,7 @@
           </div>
           <p class="stage-empty">音频文件缺失或无法加载</p>
           <audio class="stage-audio" preload="metadata">
-            <source src="assets/music/battle1.mp3" type="audio/mpeg">
+            <source src="assets/music/love-2000.mp3" type="audio/mpeg">
           </audio>
         </div>
         <button class="stage-toggle" type="button" aria-label="显示音乐控件" title="显示音乐控件">♪</button>
@@ -67,7 +72,7 @@
         <h2>BATTLE 1 投票</h2>
         <div class="vote-container">
           <div class="dancer-info">
-            <h3>舞者 A</h3>
+            <h3>暂定</h3>
             <div id="votes-dancer1-battle1">0 票</div>
           </div>
           <div>
@@ -75,7 +80,7 @@
             <p>扫码投票</p>
           </div>
           <div class="dancer-info">
-            <h3>舞者 B</h3>
+            <h3>僵尸</h3>
             <div id="votes-dancer2-battle1">0 票</div>
           </div>
         </div>

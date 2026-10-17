@@ -3,13 +3,13 @@ const state = {
   battles: {
     battle1: {
       dancer1: {
-        name: '舞者 A',
-        avatar: '/presentation/assets/images/dancer-a.jpg',
+        name: '暂定',
+        avatar: '/presentation/assets/images/battle1-dancer1.jpg',
         votes: 0
       },
       dancer2: {
-        name: '舞者 B',
-        avatar: '/presentation/assets/images/dancer-b.jpg',
+        name: '僵尸',
+        avatar: '/presentation/assets/images/battle1-dancer2.jpg',
         votes: 0
       },
       voters: new Set()
