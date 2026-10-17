@@ -56,6 +56,8 @@ test('投票接口默认返回未冻结状态', async () => {
   const response = await request('/api/vote/battle1');
 
   assert.equal(response.status, 200);
+  assert.match(response.body.dancer1.avatar, /battle1-dancer2\.jpg$/);
+  assert.match(response.body.dancer2.avatar, /battle1-dancer1\.jpg$/);
   assert.equal(response.body.locked, false);
   assert.equal(response.body.result, null);
 });

@@ -64,8 +64,8 @@ test('BATTLE 1 使用暂定、僵尸与 LOVE 2000 资源', () => {
 
   assert.equal(battle1.dancer1.name, '暂定');
   assert.equal(battle1.dancer2.name, '僵尸');
-  assert.match(battle1.dancer1.avatar, /battle1-dancer1\.jpg$/);
-  assert.match(battle1.dancer2.avatar, /battle1-dancer2\.jpg$/);
+  assert.match(battle1.dancer1.avatar, /battle1-dancer2\.jpg$/);
+  assert.match(battle1.dancer2.avatar, /battle1-dancer1\.jpg$/);
 
   assert.match(html, /BATTLE 1 · 暂定 vs 僵尸/);
   assert.match(html, /assets\/images\/love-2000-cover\.webp/);
@@ -84,4 +84,31 @@ test('BATTLE 1 使用暂定、僵尸与 LOVE 2000 资源', () => {
   ].forEach((relativePath) => {
     assert.equal(fs.existsSync(path.join(PRESENTATION_DIR, relativePath)), true, relativePath);
   });
+});
+
+test('BATTLE 1 音乐页提供头像回合切换入口', () => {
+  const html = fs.readFileSync(path.join(PRESENTATION_DIR, 'index.html'), 'utf8');
+  const musicSlide = html.match(/<section id="battle1-music"[\s\S]*?<\/section>/)[0];
+
+  assert.equal((musicSlide.match(/\bmusic-dancer-select\b/g) || []).length, 2);
+  assert.match(
+    musicSlide,
+    /data-dancer="dancer1"[\s\S]*?battle1-dancer2\.jpg[\s\S]*?暂定/
+  );
+  assert.match(
+    musicSlide,
+    /data-dancer="dancer2"[\s\S]*?battle1-dancer1\.jpg[\s\S]*?僵尸/
+  );
+});
+
+test('BATTLE 1 投票页包含头像、居中二维码、横向图表与截票结果区', () => {
+  const html = fs.readFileSync(path.join(PRESENTATION_DIR, 'index.html'), 'utf8');
+  const voteSlide = html.match(/<section id="vote-battle1"[\s\S]*?<\/section>/)[0];
+
+  assert.match(voteSlide, /vote-avatar-dancer1-battle1[\s\S]*?battle1-dancer2\.jpg/);
+  assert.match(voteSlide, /vote-avatar-dancer2-battle1[\s\S]*?battle1-dancer1\.jpg/);
+  assert.match(voteSlide, /id="qr-vote-battle1" class="qrcode"/);
+  assert.match(voteSlide, /id="vote-chart-battle1"/);
+  assert.match(voteSlide, /class="vote-lock-button"/);
+  assert.match(voteSlide, /class="vote-result"[^>]*aria-live="polite"/);
 });

@@ -4,12 +4,12 @@ const state = {
     battle1: {
       dancer1: {
         name: '暂定',
-        avatar: '/presentation/assets/images/battle1-dancer1.jpg',
+        avatar: '/presentation/assets/images/battle1-dancer2.jpg',
         votes: 0
       },
       dancer2: {
         name: '僵尸',
-        avatar: '/presentation/assets/images/battle1-dancer2.jpg',
+        avatar: '/presentation/assets/images/battle1-dancer1.jpg',
         votes: 0
       },
       locked: false,
