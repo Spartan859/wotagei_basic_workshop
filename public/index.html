@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wota艺基础讲座</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #090b12;
+      color: #f7f8ff;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, #20264a, #090b12 65%);
+    }
+
+    .gate {
+      width: min(420px, calc(100% - 40px));
+      padding: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      background: rgba(14, 17, 31, 0.92);
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+      text-align: center;
+    }
+
+    h1 { margin: 0 0 12px; font-size: clamp(1.7rem, 5vw, 2.4rem); }
+    p { color: #c9cde2; line-height: 1.6; }
+    label { display: block; margin-top: 24px; text-align: left; color: #dce0f1; }
+    input, button {
+      width: 100%;
+      min-height: 48px;
+      box-sizing: border-box;
+      margin-top: 8px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    input { padding: 0 14px; border: 1px solid #4c557a; background: #11162a; color: #fff; }
+    button { border: 0; background: #6d6cff; color: #fff; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity: 0.65; cursor: wait; }
+    .message { min-height: 1.5em; margin: 16px 0 0; color: #ffb9b9; }
+    .mobile-only { display: none; }
+    body.is-mobile .desktop-only { display: none; }
+    body.is-mobile .mobile-only { display: block; }
+  </style>
+</head>
+<body>
+  <main class="gate">
+    <section class="desktop-only">
+      <h1>Wota艺基础讲座</h1>
+      <p>请输入管理员令牌后进入演示 PPT。</p>
+      <form id="token-form">
+        <label for="token">管理员令牌</label>
+        <input id="token" name="token" type="password" autocomplete="current-password" required>
+        <button type="submit">进入 PPT</button>
+      </form>
+      <p id="message" class="message" role="alert"></p>
+    </section>
+    <section class="mobile-only">
+      <h1>请用 PC 访问</h1>
+      <p>演示 PPT 仅支持电脑端打开，请在电脑浏览器访问本页面。</p>
+    </section>
+  </main>
+
+  <script>
+    const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+      || window.matchMedia('(max-width: 767px)').matches;
+    document.body.classList.toggle('is-mobile', mobile);
+
+    const form = document.getElementById('token-form');
+    const message = document.getElementById('message');
+    if (form) {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const button = form.querySelector('button');
+        button.disabled = true;
+        message.textContent = '';
+
+        try {
+          const response = await fetch('/api/presentation/access', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: form.token.value })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || '令牌校验失败');
+
+          try {
+            sessionStorage.setItem('wotagei_admin_token', form.token.value.trim());
+          } catch (storageError) {
+            // 隐私模式禁用 sessionStorage 时仍允许进入演示端。
+          }
+          window.location.assign('/presentation/index.html');
+        } catch (error) {
+          message.textContent = error.message || '令牌校验失败，请重试';
+          button.disabled = false;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
