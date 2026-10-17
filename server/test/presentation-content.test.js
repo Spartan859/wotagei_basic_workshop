@@ -109,6 +109,8 @@ test('BATTLE 1 投票页包含头像、居中二维码、横向图表与截票�
   assert.match(voteSlide, /vote-avatar-dancer2-battle1[\s\S]*?battle1-dancer1\.jpg/);
   assert.match(voteSlide, /id="qr-vote-battle1" class="qrcode"/);
   assert.match(voteSlide, /id="vote-chart-battle1"/);
-  assert.match(voteSlide, /class="vote-lock-button"/);
+  assert.match(voteSlide, /class="vote-action-button vote-lock-button"/);
+  assert.match(voteSlide, /data-vote-unlock="battle1"/);
+  assert.match(voteSlide, /data-vote-reset="battle1"/);
   assert.match(voteSlide, /class="vote-result"[^>]*aria-live="polite"/);
 });

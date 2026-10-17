@@ -36,6 +36,7 @@ function updateVoteChart(data, battleId) {
 
   const stage = ctx.closest('.vote-stage');
   const lockButton = stage.querySelector('.vote-lock-button');
+  const cancelButton = stage.querySelector('.vote-cancel-button');
   const avatar1 = document.getElementById(`vote-avatar-dancer1-${battleId}`);
   const avatar2 = document.getElementById(`vote-avatar-dancer2-${battleId}`);
   const name1 = document.getElementById(`vote-name-dancer1-${battleId}`);
@@ -55,6 +56,7 @@ function updateVoteChart(data, battleId) {
 
   stage.classList.toggle('is-locked', data.locked);
   lockButton.disabled = false;
+  cancelButton.hidden = !data.locked;
   if (data.locked) {
     if (!stage.classList.contains('has-result')) {
       result.hidden = true;
@@ -218,6 +220,42 @@ async function lockBattleVote(battleId) {
   }
 }
 
+async function unlockBattleVote(battleId) {
+  if (!confirm('确定取消截票吗？现有票数会保留，投票将重新开放。')) return;
+
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
+  try {
+    const response = await axios.post(`${API_BASE_URL}/vote/${battleId}/unlock`, {
+      adminToken
+    });
+    lastSuccessfulData[battleId] = response.data;
+    updateVoteChart(response.data, battleId);
+    startVotePolling(battleId);
+  } catch (error) {
+    alert('取消截票失败: ' + describeAdminError(error));
+  }
+}
+
+async function resetBattleVote(battleId) {
+  if (!confirm('确定重置本场投票吗？本场全部票数和已投票记录都会清空。')) return;
+
+  const adminToken = getAdminToken();
+  if (!adminToken) return;
+
+  try {
+    const response = await axios.post(`${API_BASE_URL}/vote/${battleId}/reset`, {
+      adminToken
+    });
+    lastSuccessfulData[battleId] = response.data;
+    updateVoteChart(response.data, battleId);
+    startVotePolling(battleId);
+  } catch (error) {
+    alert('重置投票失败: ' + describeAdminError(error));
+  }
+}
+
 function handleVoteAction(battleId) {
   const stage = document.getElementById(`vote-${battleId}`);
   if (!stage) return;
@@ -236,6 +274,20 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', (event) => {
       event.stopPropagation();
       handleVoteAction(button.dataset.voteLock);
+    });
+  });
+
+  document.querySelectorAll('[data-vote-unlock]').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      unlockBattleVote(button.dataset.voteUnlock);
+    });
+  });
+
+  document.querySelectorAll('[data-vote-reset]').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      resetBattleVote(button.dataset.voteReset);
     });
   });
 });

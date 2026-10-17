@@ -150,8 +150,15 @@
             </div>
           </div>
         </div>
-        <button class="vote-lock-button" type="button" data-vote-lock="battle1"
-                aria-label="截票并公布本场结果">截票</button>
+        <div class="vote-actions">
+          <button class="vote-action-button vote-lock-button" type="button"
+                  data-vote-lock="battle1"
+                  aria-label="截票并公布本场结果">截票</button>
+          <button class="vote-action-button vote-cancel-button" type="button"
+                  data-vote-unlock="battle1" hidden>取消截票</button>
+          <button class="vote-action-button vote-reset-button" type="button"
+                  data-vote-reset="battle1">重置本场</button>
+        </div>
         <div class="vote-result" aria-live="polite" hidden></div>
       </section>
 
@@ -247,8 +254,15 @@
             </div>
           </div>
         </div>
-        <button class="vote-lock-button" type="button" data-vote-lock="battle2"
-                aria-label="截票并公布本场结果">截票</button>
+        <div class="vote-actions">
+          <button class="vote-action-button vote-lock-button" type="button"
+                  data-vote-lock="battle2"
+                  aria-label="截票并公布本场结果">截票</button>
+          <button class="vote-action-button vote-cancel-button" type="button"
+                  data-vote-unlock="battle2" hidden>取消截票</button>
+          <button class="vote-action-button vote-reset-button" type="button"
+                  data-vote-reset="battle2">重置本场</button>
+        </div>
         <div class="vote-result" aria-live="polite" hidden></div>
       </section>
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getState } = require('../state');
+const { getState, resetVote } = require('../state');
 
 function buildResult(battle) {
   if (battle.dancer1.votes === battle.dancer2.votes) {
@@ -88,6 +88,44 @@ router.post('/:battleId/lock', (req, res) => {
   }
 
   battle.locked = true;
+  res.json({ success: true, ...buildSnapshot(battle) });
+});
+
+// 取消截票：保留票数与已投票设备，重新开放投票
+router.post('/:battleId/unlock', (req, res) => {
+  const { battleId } = req.params;
+  const { adminToken } = req.body;
+  const state = getState();
+
+  if (adminToken !== state.adminToken) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  const battle = state.battles[battleId];
+  if (!battle) {
+    return res.status(404).json({ error: 'Battle not found' });
+  }
+
+  battle.locked = false;
+  res.json({ success: true, ...buildSnapshot(battle) });
+});
+
+// 重置本场投票：清空票数与已投票设备，并解除冻结
+router.post('/:battleId/reset', (req, res) => {
+  const { battleId } = req.params;
+  const { adminToken } = req.body;
+  const state = getState();
+
+  if (adminToken !== state.adminToken) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  const battle = state.battles[battleId];
+  if (!battle) {
+    return res.status(404).json({ error: 'Battle not found' });
+  }
+
+  resetVote(battleId);
   res.json({ success: true, ...buildSnapshot(battle) });
 });
 
