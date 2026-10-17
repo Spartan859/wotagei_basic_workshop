@@ -11,6 +11,7 @@
     <h1 id="battle-title">投票</h1>
 
     <div id="dancers-container"></div>
+    <div id="vote-result" class="vote-result" aria-live="polite" hidden></div>
   </div>
 
   <script src="js/mobile.js"></script>
@@ -27,28 +28,45 @@
       document.getElementById('battle-title').textContent =
         battleId === 'battle1' ? 'BATTLE 1 投票' : 'BATTLE 2 投票';
 
-      // 加载舞者信息
-      fetchWithErrorHandling(`${API_BASE_URL}/vote/${battleId}`)
-        .then(data => {
-          if (!data) return;
+      // 加载舞者信息与当前截票状态
+      async function loadVoteData() {
+        const data = await fetchWithErrorHandling(`${API_BASE_URL}/vote/${battleId}`);
+        if (!data) return;
 
-          const container = document.getElementById('dancers-container');
-          container.innerHTML = `
-            <button class="dancer-btn" data-dancer="dancer1">
-              <img src="${data.dancer1.avatar}" alt="${data.dancer1.name}">
-              <span>${data.dancer1.name}</span>
-            </button>
-            <button class="dancer-btn" data-dancer="dancer2">
-              <img src="${data.dancer2.avatar}" alt="${data.dancer2.name}">
-              <span>${data.dancer2.name}</span>
-            </button>
-          `;
+        const container = document.getElementById('dancers-container');
+        container.innerHTML = `
+          <button class="dancer-btn" data-dancer="dancer1" ${data.locked ? 'disabled' : ''}>
+            <img src="${escapeHtml(data.dancer1.avatar)}" alt="${escapeHtml(data.dancer1.name)}">
+            <span>${escapeHtml(data.dancer1.name)}</span>
+          </button>
+          <button class="dancer-btn" data-dancer="dancer2" ${data.locked ? 'disabled' : ''}>
+            <img src="${escapeHtml(data.dancer2.avatar)}" alt="${escapeHtml(data.dancer2.name)}">
+            <span>${escapeHtml(data.dancer2.name)}</span>
+          </button>
+        `;
 
-          // 绑定投票事件
-          document.querySelectorAll('.dancer-btn').forEach(btn => {
-            btn.addEventListener('click', () => vote(btn.dataset.dancer));
-          });
+        document.querySelectorAll('.dancer-btn').forEach(btn => {
+          btn.addEventListener('click', () => vote(btn.dataset.dancer));
         });
+
+        const result = document.getElementById('vote-result');
+        if (!data.locked || !data.result) {
+          result.hidden = true;
+          result.textContent = '';
+          return;
+        }
+
+        result.hidden = false;
+        if (data.result.type === 'tie') {
+          result.textContent = `投票已结束：${data.dancer1.name} ${data.dancer1.votes} 票，` +
+            `${data.dancer2.name} ${data.dancer2.votes} 票，平票。`;
+        } else {
+          const winner = data[data.result.winner];
+          result.textContent = `投票已结束：${winner.name} 以 ${winner.votes} 票获胜。`;
+        }
+      }
+
+      loadVoteData();
 
       async function vote(dancer) {
         const buttons = document.querySelectorAll('.dancer-btn');
@@ -66,12 +84,8 @@
         if (result && result.success) {
           showMessage('投票成功！', 'success');
         } else {
-          // 如果是 409 错误（已投票）
-          if (result === null) {
-            buttons.forEach(btn => btn.disabled = false);
-          } else {
-            showMessage('您已经投过票了', 'info');
-          }
+          // 刷新真实状态，区分已截票、重复投票和网络错误。
+          window.setTimeout(loadVoteData, result === null ? 600 : 0);
         }
       }
     })();

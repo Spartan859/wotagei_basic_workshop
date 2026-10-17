@@ -50,7 +50,7 @@
         <h2>BATTLE 1</h2>
         <div class="battle-faceoff">
           <div class="dancer-info">
-            <img src="assets/images/battle1-dancer1.jpg" alt="暂定">
+            <img src="assets/images/battle1-dancer2.jpg" alt="暂定">
             <h3>暂定</h3>
           </div>
           <div class="battle-reveal-stage" data-step="vs">
@@ -71,7 +71,7 @@
             </figure>
           </div>
           <div class="dancer-info">
-            <img src="assets/images/battle1-dancer2.jpg" alt="僵尸">
+            <img src="assets/images/battle1-dancer1.jpg" alt="僵尸">
             <h3>僵尸</h3>
           </div>
         </div>
@@ -81,11 +81,13 @@
       <section id="battle1-music" class="music-stage is-blank" data-background="#000">
         <h2>BATTLE 1 音乐</h2>
         <div class="stage-panel battle-music-panel">
-          <div class="battle-music-faceoff">
-            <div class="dancer-info music-dancer">
-              <img src="assets/images/battle1-dancer1.jpg" alt="暂定">
-              <h3>暂定</h3>
-            </div>
+          <div class="battle-music-faceoff" data-active-dancer="">
+            <button class="music-dancer music-dancer-select" type="button"
+                    data-dancer="dancer1" aria-pressed="false"
+                    aria-label="设为暂定的回合">
+              <img src="assets/images/battle1-dancer2.jpg" alt="暂定">
+              <span class="music-dancer-name">暂定</span>
+            </button>
             <figure class="music-release">
               <img src="assets/images/love-2000-cover.webp"
                    alt="LOVE 2000 专辑封面">
@@ -94,10 +96,12 @@
                 <span>BATTLE 1 · 暂定 vs 僵尸</span>
               </figcaption>
             </figure>
-            <div class="dancer-info music-dancer">
-              <img src="assets/images/battle1-dancer2.jpg" alt="僵尸">
-              <h3>僵尸</h3>
-            </div>
+            <button class="music-dancer music-dancer-select" type="button"
+                    data-dancer="dancer2" aria-pressed="false"
+                    aria-label="设为僵尸的回合">
+              <img src="assets/images/battle1-dancer1.jpg" alt="僵尸">
+              <span class="music-dancer-name">僵尸</span>
+            </button>
           </div>
           <div class="stage-controls">
             <button class="stage-play" type="button" aria-label="播放/暂停">▶</button>
@@ -114,23 +118,48 @@
       </section>
 
       <!-- 4. BATTLE 1 投票 -->
-      <section id="vote-battle1">
+      <section id="vote-battle1" class="vote-stage">
         <h2>BATTLE 1 投票</h2>
-        <div class="vote-container">
-          <div class="dancer-info">
-            <h3>暂定</h3>
-            <div id="votes-dancer1-battle1">0 票</div>
-          </div>
-          <div>
+        <div class="vote-layout">
+          <article class="vote-contestant" data-dancer="dancer1">
+            <img id="vote-avatar-dancer1-battle1"
+                 src="assets/images/battle1-dancer2.jpg" alt="暂定">
+            <h3 id="vote-name-dancer1-battle1">暂定</h3>
+            <div id="votes-dancer1-battle1" class="vote-score">0 票</div>
+          </article>
+          <div class="vote-center">
             <div id="qr-vote-battle1" class="qrcode"></div>
             <p>扫码投票</p>
           </div>
-          <div class="dancer-info">
-            <h3>僵尸</h3>
-            <div id="votes-dancer2-battle1">0 票</div>
+          <article class="vote-contestant" data-dancer="dancer2">
+            <img id="vote-avatar-dancer2-battle1"
+                 src="assets/images/battle1-dancer1.jpg" alt="僵尸">
+            <h3 id="vote-name-dancer2-battle1">僵尸</h3>
+            <div id="votes-dancer2-battle1" class="vote-score">0 票</div>
+          </article>
+        </div>
+        <div class="vote-data-area">
+          <p class="vote-count-status">投票进行中 · 截票后公布票数</p>
+          <div class="vote-chart-panel">
+            <div class="vote-chart-heading">
+              <span>实时票数</span>
+              <span id="vote-total-battle1">共 0 票</span>
+            </div>
+            <div class="vote-chart-wrap">
+              <canvas id="vote-chart-battle1"></canvas>
+            </div>
           </div>
         </div>
-        <canvas id="vote-chart-battle1"></canvas>
+        <div class="vote-actions">
+          <button class="vote-action-button vote-lock-button" type="button"
+                  data-vote-lock="battle1"
+                  aria-label="截票并公布本场结果">截票</button>
+          <button class="vote-action-button vote-cancel-button" type="button"
+                  data-vote-unlock="battle1" hidden>取消截票</button>
+          <button class="vote-action-button vote-reset-button" type="button"
+                  data-vote-reset="battle1">重置本场</button>
+        </div>
+        <div class="vote-result" aria-live="polite" hidden></div>
       </section>
 
       <!-- 5. 视频播放 -->
@@ -193,23 +222,48 @@
       </section>
 
       <!-- 9. BATTLE 2 投票 -->
-      <section id="vote-battle2">
+      <section id="vote-battle2" class="vote-stage">
         <h2>BATTLE 2 投票</h2>
-        <div class="vote-container">
-          <div class="dancer-info">
-            <h3>舞者 C</h3>
-            <div id="votes-dancer1-battle2">0 票</div>
-          </div>
-          <div>
+        <div class="vote-layout">
+          <article class="vote-contestant" data-dancer="dancer1">
+            <img id="vote-avatar-dancer1-battle2"
+                 src="assets/images/dancer-c.jpg" alt="舞者 C">
+            <h3 id="vote-name-dancer1-battle2">舞者 C</h3>
+            <div id="votes-dancer1-battle2" class="vote-score">0 票</div>
+          </article>
+          <div class="vote-center">
             <div id="qr-vote-battle2" class="qrcode"></div>
             <p>扫码投票</p>
           </div>
-          <div class="dancer-info">
-            <h3>舞者 D</h3>
-            <div id="votes-dancer2-battle2">0 票</div>
+          <article class="vote-contestant" data-dancer="dancer2">
+            <img id="vote-avatar-dancer2-battle2"
+                 src="assets/images/dancer-d.jpg" alt="舞者 D">
+            <h3 id="vote-name-dancer2-battle2">舞者 D</h3>
+            <div id="votes-dancer2-battle2" class="vote-score">0 票</div>
+          </article>
+        </div>
+        <div class="vote-data-area">
+          <p class="vote-count-status">投票进行中 · 截票后公布票数</p>
+          <div class="vote-chart-panel">
+            <div class="vote-chart-heading">
+              <span>实时票数</span>
+              <span id="vote-total-battle2">共 0 票</span>
+            </div>
+            <div class="vote-chart-wrap">
+              <canvas id="vote-chart-battle2"></canvas>
+            </div>
           </div>
         </div>
-        <canvas id="vote-chart-battle2"></canvas>
+        <div class="vote-actions">
+          <button class="vote-action-button vote-lock-button" type="button"
+                  data-vote-lock="battle2"
+                  aria-label="截票并公布本场结果">截票</button>
+          <button class="vote-action-button vote-cancel-button" type="button"
+                  data-vote-unlock="battle2" hidden>取消截票</button>
+          <button class="vote-action-button vote-reset-button" type="button"
+                  data-vote-reset="battle2">重置本场</button>
+        </div>
+        <div class="vote-result" aria-live="polite" hidden></div>
       </section>
 
       <!-- 10. 上手实操 -->

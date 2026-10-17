@@ -108,6 +108,21 @@ button:disabled {
   border: 1px solid #bee5eb;
 }
 
+.vote-result {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid #f1c870;
+  border-radius: 6px;
+  background: #fff8e6;
+  color: #5c4300;
+  text-align: center;
+  font-weight: 600;
+}
+
+.vote-result[hidden] {
+  display: none;
+}
+
 .member-list {
   list-style: none;
   padding: 0;

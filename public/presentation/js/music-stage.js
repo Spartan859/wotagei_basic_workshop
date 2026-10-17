@@ -62,6 +62,35 @@ function toggleStage(stage) {
 }
 
 /* --------------------------------------------------------------------------
+   回合聚焦：点击头像突出当前出战选手
+   -------------------------------------------------------------------------- */
+function setActiveMusicDancer(stage, dancer = '') {
+  const faceoff = stage.querySelector('.battle-music-faceoff');
+  if (!faceoff) return;
+
+  faceoff.dataset.activeDancer = dancer;
+  faceoff.querySelectorAll('.music-dancer-select').forEach((button) => {
+    const active = button.dataset.dancer === dancer;
+    button.setAttribute('aria-pressed', String(active));
+  });
+}
+
+function setupMusicDancerSelection(stage) {
+  const faceoff = stage.querySelector('.battle-music-faceoff');
+  if (!faceoff) return;
+
+  faceoff.querySelectorAll('.music-dancer-select').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const next = faceoff.dataset.activeDancer === button.dataset.dancer
+        ? ''
+        : button.dataset.dancer;
+      setActiveMusicDancer(stage, next);
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
    自定义播放控件
    -------------------------------------------------------------------------- */
 function formatTime(seconds) {
@@ -164,6 +193,7 @@ function initMusicStages() {
     if (!stageState[stage.id]) stageState[stage.id] = 'blank';
     setStageMode(stage, stageState[stage.id]);
 
+    setupMusicDancerSelection(stage);
     setupStageAudio(stage);
   });
 
@@ -179,6 +209,7 @@ function handleStageSlideChange(currentSlide) {
     if (stage !== currentSlide) {
       const audio = stage.querySelector('audio');
       if (audio && !audio.paused) audio.pause();
+      setActiveMusicDancer(stage, '');
     }
   });
   syncProgressBar(currentSlide);

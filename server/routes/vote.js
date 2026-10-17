@@ -1,6 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const { getState } = require('../state');
+const { getState, resetVote } = require('../state');
+
+function buildResult(battle) {
+  if (battle.dancer1.votes === battle.dancer2.votes) {
+    return { type: 'tie', winner: null };
+  }
+
+  return {
+    type: 'winner',
+    winner: battle.dancer1.votes > battle.dancer2.votes ? 'dancer1' : 'dancer2'
+  };
+}
+
+function buildSnapshot(battle) {
+  return {
+    dancer1: {
+      name: battle.dancer1.name,
+      avatar: battle.dancer1.avatar,
+      votes: battle.dancer1.votes
+    },
+    dancer2: {
+      name: battle.dancer2.name,
+      avatar: battle.dancer2.avatar,
+      votes: battle.dancer2.votes
+    },
+    locked: battle.locked,
+    result: battle.locked ? buildResult(battle) : null
+  };
+}
 
 // 提交投票
 router.post('/', (req, res) => {
@@ -22,6 +50,10 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'Invalid dancer' });
   }
 
+  if (battle.locked) {
+    return res.status(409).json({ error: '投票已结束', code: 'VOTE_LOCKED' });
+  }
+
   // 防重复投票
   if (battle.voters.has(deviceId)) {
     return res.status(409).json({ error: 'Already voted' });
@@ -40,6 +72,63 @@ router.post('/', (req, res) => {
   });
 });
 
+// 截票：管理员冻结当前票数，重复调用保持幂等
+router.post('/:battleId/lock', (req, res) => {
+  const { battleId } = req.params;
+  const { adminToken } = req.body;
+  const state = getState();
+
+  if (adminToken !== state.adminToken) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  const battle = state.battles[battleId];
+  if (!battle) {
+    return res.status(404).json({ error: 'Battle not found' });
+  }
+
+  battle.locked = true;
+  res.json({ success: true, ...buildSnapshot(battle) });
+});
+
+// 取消截票：保留票数与已投票设备，重新开放投票
+router.post('/:battleId/unlock', (req, res) => {
+  const { battleId } = req.params;
+  const { adminToken } = req.body;
+  const state = getState();
+
+  if (adminToken !== state.adminToken) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  const battle = state.battles[battleId];
+  if (!battle) {
+    return res.status(404).json({ error: 'Battle not found' });
+  }
+
+  battle.locked = false;
+  res.json({ success: true, ...buildSnapshot(battle) });
+});
+
+// 重置本场投票：清空票数与已投票设备，并解除冻结
+router.post('/:battleId/reset', (req, res) => {
+  const { battleId } = req.params;
+  const { adminToken } = req.body;
+  const state = getState();
+
+  if (adminToken !== state.adminToken) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  const battle = state.battles[battleId];
+  if (!battle) {
+    return res.status(404).json({ error: 'Battle not found' });
+  }
+
+  resetVote(battleId);
+  res.json({ success: true, ...buildSnapshot(battle) });
+});
+
 // 获取投票结果
 router.get('/:battleId', (req, res) => {
   const { battleId } = req.params;
@@ -50,18 +139,7 @@ router.get('/:battleId', (req, res) => {
     return res.status(404).json({ error: 'Battle not found' });
   }
 
-  res.json({
-    dancer1: {
-      name: battle.dancer1.name,
-      avatar: battle.dancer1.avatar,
-      votes: battle.dancer1.votes
-    },
-    dancer2: {
-      name: battle.dancer2.name,
-      avatar: battle.dancer2.avatar,
-      votes: battle.dancer2.votes
-    }
-  });
+  res.json(buildSnapshot(battle));
 });
 
 module.exports = router;

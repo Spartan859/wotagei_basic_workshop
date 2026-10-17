@@ -2,6 +2,17 @@
 // 写死 localhost 会让观众手机上的请求打到手机自己，投票/分组/抽奖全部失败。
 const API_BASE_URL = window.location.origin + '/api';
 
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return String(text).replace(/[&<>"']/g, m => map[m]);
+}
+
 // 生成 UUID v4
 function generateDeviceId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {

@@ -166,6 +166,7 @@ const state = {
         avatar: '',
         votes: 0
       },
+      locked: false,           // 截票后拒绝新票，直到重置该 battle
       voters: new Set()     // 已投票的 deviceId，防重复
     },
     battle2: {
@@ -215,7 +216,35 @@ Body:  { battleId: 'battle1', dancer: 'dancer1', deviceId: 'uuid' }
 Return: { success: true, votes: { dancer1: 10, dancer2: 8 } }
 
 GET    /api/vote/:battleId
-Return: { dancer1: { name, avatar, votes }, dancer2: { ... } }
+Return: {
+  dancer1: { name, avatar, votes },
+  dancer2: { ... },
+  locked: false,
+  result: null
+}
+
+POST   /api/vote/:battleId/lock
+Body:  { adminToken: '...' }
+Return: {
+  success: true,
+  dancer1: { ... },
+  dancer2: { ... },
+  locked: true,
+  result: { type: 'winner' | 'tie', winner: 'dancer1' | 'dancer2' | null }
+}
+
+截票后 POST /api/vote 返回 409：
+{ error: '投票已结束', code: 'VOTE_LOCKED' }
+
+重复截票幂等返回同一冻结结果；重置投票会清零票数并解除冻结。
+
+POST   /api/vote/:battleId/unlock
+Body:  { adminToken: '...' }
+Return: 保留现有票数与已投票设备，解除冻结并返回投票快照。
+
+POST   /api/vote/:battleId/reset
+Body:  { adminToken: '...' }
+Return: 清空本场票数与已投票设备、解除冻结，并返回投票快照。
 ```
 
 #### 分组相关
@@ -892,6 +921,14 @@ function updateVoteChart(data) {
   }
 }
 ```
+
+**BATTLE 1 现场稿补充：**
+
+- 音乐页头像可点击切换回合聚焦；选中一位后隐藏另一位并放大高亮，再次点击恢复双人对阵，离开页面时自动复位。
+- 投票页同时展示两位选手头像、票数、中央二维码和下方横向双行柱状图。
+- 演示端投票中隐藏票数与图表；右上角“截票”按钮调用管理员接口后统一公布双方票数，再点击“查看胜负”展示胜者，等票时展示平票。
+- 截票后显示“取消截票”；取消时保留票数与防重复记录并恢复投票。“重置本场”清空当前 BATTLE 的全部票数和投票记录。
+- 手机端进入已截票页面时禁用投票按钮，并显示胜者或平票结果。
 
 ### 抽奖滚动动画
 

@@ -4,14 +4,15 @@ const state = {
     battle1: {
       dancer1: {
         name: '暂定',
-        avatar: '/presentation/assets/images/battle1-dancer1.jpg',
+        avatar: '/presentation/assets/images/battle1-dancer2.jpg',
         votes: 0
       },
       dancer2: {
         name: '僵尸',
-        avatar: '/presentation/assets/images/battle1-dancer2.jpg',
+        avatar: '/presentation/assets/images/battle1-dancer1.jpg',
         votes: 0
       },
+      locked: false,
       voters: new Set()
     },
     battle2: {
@@ -25,6 +26,7 @@ const state = {
         avatar: '/presentation/assets/images/dancer-d.jpg',
         votes: 0
       },
+      locked: false,
       voters: new Set()
     }
   },
@@ -58,6 +60,7 @@ module.exports = {
     if (state.battles[battleId]) {
       state.battles[battleId].dancer1.votes = 0;
       state.battles[battleId].dancer2.votes = 0;
+      state.battles[battleId].locked = false;
       state.battles[battleId].voters.clear();
     }
   },
